@@ -2,7 +2,7 @@ import { createSignal, onCleanup } from "solid-js"
 import { Command, ComposerPill, Plugin, Style, type ComposerPillView, type SetupContext } from "@opencode/plugin/gui"
 import { Voice } from "./contract"
 import { composerOf, CSS, injectComposerButtons, typeInto } from "./inject"
-import { VoiceRpc } from "./rpc"
+import { isUnavailable, VoiceRpc, whenAvailable } from "./rpc"
 import { main } from "./main"
 
 const definition = Plugin.define({
@@ -45,6 +45,7 @@ const toBase64 = (blob: Blob) =>
   })
 
 const message = (error: unknown) => {
+  if (isUnavailable(error)) return "Voice input is still starting in OpenCode. Try again in a moment."
   // Plugin RPC errors carry the user-facing reason in data.message.
   const data = (error as { data?: { message?: unknown } } | undefined)?.data
   if (typeof data?.message === "string") return data.message
@@ -161,7 +162,9 @@ const setup = (ctx: Ctx) => {
       const blob = await recorder.stop()
       if (!blob || blob.size === 0) throw new Error(ctx.t("nospeech"))
       const audio = await toBase64(blob)
-      const result = await ctx.client.rpc(VoiceRpc).transcribe({ audio, mimeType: blob.type, language: language() })
+      const result = await whenAvailable(() =>
+        ctx.client.rpc(VoiceRpc).transcribe({ audio, mimeType: blob.type, language: language() }),
+      )
       const text = (result as { text: string }).text
       setPhase({ kind: "idle" })
       insert(text)

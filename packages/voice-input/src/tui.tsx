@@ -1,7 +1,7 @@
 /** @jsxImportSource @opentui/solid */
 import { createSignal, Show } from "solid-js"
 import { Plugin } from "@opencode/plugin/tui"
-import { VoiceRpc } from "./rpc"
+import { isUnavailable, VoiceRpc, whenAvailable } from "./rpc"
 import { clipboard, FfmpegRecorder } from "./tui-audio"
 
 type Phase = "idle" | "starting" | "recording" | "transcribing"
@@ -12,6 +12,7 @@ const MAX_RECORDING_MS = 10 * 60_000
 const RESTORE_DELAY_MS = 1500
 
 const message = (error: unknown) => {
+  if (isUnavailable(error)) return "Voice input is still starting in OpenCode. Try again in a moment."
   const data = (error as { data?: { message?: unknown } } | undefined)?.data
   if (typeof data?.message === "string") return data.message
   return error instanceof Error ? error.message : String(error)
@@ -83,11 +84,13 @@ export default Plugin.define({
       try {
         const audio = await recorder.stop()
         if (audio.byteLength === 0) throw new Error("Nothing was recorded")
-        const result = await context.client.rpc(VoiceRpc).transcribe({
-          audio: audio.toString("base64"),
-          mimeType: "audio/webm",
-          language,
-        })
+        const result = await whenAvailable(() =>
+          context.client.rpc(VoiceRpc).transcribe({
+            audio: audio.toString("base64"),
+            mimeType: "audio/webm",
+            language,
+          }),
+        )
         const text = (result as { text: string }).text.trim()
         setPhase("idle")
         if (!text) {
@@ -169,7 +172,8 @@ export default Plugin.define({
               return ""
           }
         }
-        const color = () => (phase() === "recording" ? theme.text.feedback.error.base : theme.text.feedback.warning.base)
+        const color = () =>
+          phase() === "recording" ? theme.text.feedback.error.base : theme.text.feedback.warning.base
         return (
           <Show when={phase() !== "idle"}>
             <text fg={color()} onMouseDown={() => toggle()}>
