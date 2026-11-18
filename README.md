@@ -92,8 +92,10 @@ version (`0.1.0`) from your machine with your own 2FA:
 
 ```sh
 pnpm package <id>
-npm publish artifacts/fatihdogmus-opencode-<id>-0.1.0.tgz --access public
+npm publish ./artifacts/fatihdogmus-opencode-<id>-0.1.0.tgz --access public
 ```
+
+Keep the `./`: without it, npm reads `artifacts/<file>` as a GitHub `user/repo` shorthand.
 
 Then push a `<id>-v0.1.0` tag on the commit you published, add the trusted publisher, and use the Release workflow from
 then on.
