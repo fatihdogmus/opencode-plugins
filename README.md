@@ -6,7 +6,7 @@
 | --- | --- |
 | [`@fatihdogmus/opencode-codex-guardian`](packages/codex-guardian) | Codex Guardian permission reviews for OpenCode V2 |
 | [`@fatihdogmus/opencode-voice-input`](packages/voice-input) | Voice prompts for OpenCode Desktop and the TUI, transcribed with your OpenAI account |
-| [`@fatihdogmus/opencode-agentic-review`](packages/agentic-review) | Turn snapshots for the Agentic Review IntelliJ plugin (still on the V1 plugin API) |
+| [`@fatihdogmus/opencode-agentic-review`](packages/agentic-review) | Turn snapshots for the Agentic Review IntelliJ plugin |
 
 Install a plugin by adding its package name to `plugins` in your `opencode.json(c)`; OpenCode installs it itself.
 

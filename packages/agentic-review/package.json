@@ -1,7 +1,7 @@
 {
   "name": "@fatihdogmus/opencode-agentic-review",
   "version": "0.1.0",
-  "description": "OpenCode plugin that records agent turns for the Agentic Review IntelliJ plugin through its MCP server",
+  "description": "OpenCode V2 plugin that records agent turns for the Agentic Review IntelliJ plugin through its MCP server",
   "license": "MIT",
   "type": "module",
   "engines": {
@@ -39,14 +39,18 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --project tsconfig.build.json",
+    "test": "node --import tsx --test test/*.test.ts",
     "typecheck": "tsc --noEmit",
-    "check": "pnpm typecheck && pnpm build"
+    "check": "pnpm typecheck && pnpm test && pnpm build"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.0.0"
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "@opencode/plugin": "2.3.2"
   },
   "devDependencies": {
+    "@types/node": "^26.6.6",
+    "tsx": "^4.23.15",
     "typescript": "^5.0.0"
   }
 }

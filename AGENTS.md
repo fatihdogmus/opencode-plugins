@@ -12,7 +12,10 @@ for layout, adding a plugin, and releasing.
   `scripts/release/validate.mjs` requires.
 - Dependency build scripts are denied by default; only add an `allowBuilds` entry in `pnpm-workspace.yaml` when a
   package really needs its install script.
-- OpenCode plugin docs: https://opencode.ai/docs/build/plugins (server, TUI, GUI, RPC). V1 plugin implementations do
-  not run in V2; `agentic-review` still needs porting.
+- OpenCode plugin docs: https://opencode.ai/docs/build/plugins (server, TUI, GUI, RPC). Write V2 plugins only
+  (`Plugin.define` from `@opencode/plugin`); V1 plugin implementations do not run in V2.
+- `ctx.event.subscribe()` streams every location's events. `session.step.*` events carry `location`;
+  `session.execution.*` events don't. A run ends with `session.execution.succeeded|failed|interrupted`, not
+  `session.idle`.
 - A running shared OpenCode service caches a local plugin's `package.json` exports. After adding a new part (`./tui`,
   `./rpc`, …) to a locally loaded plugin, run `opencode service restart` or test with `opencode --standalone`.
