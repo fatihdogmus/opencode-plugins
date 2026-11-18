@@ -8,7 +8,11 @@
 | [`@fatihdogmus/opencode-voice-input`](packages/voice-input) | Voice prompts for OpenCode Desktop and the TUI, transcribed with your OpenAI account |
 | [`@fatihdogmus/opencode-agentic-review`](packages/agentic-review) | Turn snapshots for the Agentic Review IntelliJ plugin |
 
-Install a plugin by adding its package name to `plugins` in your `opencode.json(c)`; OpenCode installs it itself.
+Install a plugin with `opencode plugin add <package>`, or add its package name to `plugins` in your `opencode.json(c)`;
+OpenCode installs it itself. Each package's README covers its requirements and options.
+
+**For agents:** to install one of these plugins, follow the **For agents** section of that package's README. It lists
+what to check first, the install command, how to verify it, and what not to change.
 
 ## Layout
 
@@ -48,10 +52,13 @@ new dependency's build script, allow it there only if the package actually needs
    `publishConfig` (`access: public`, `registry: https://registry.npmjs.org/`), `repository` with
    `url: git+https://github.com/fatihdogmus/opencode-plugins.git` and `directory: packages/<id>`, `exports`, and `files`.
 2. Add `build`/`typecheck`/`test` scripts as needed and a `check` script that runs them.
-3. Add a `README.md`, and copy the root `LICENSE` into the package.
-4. Add `<id>` to the `package` options in `.github/workflows/release.yml`.
+3. Add a `README.md` with a `## For agents` section: the prerequisites to check, `opencode plugin add <package>`, how to
+   verify with `opencode plugin list`, what an agent must not change, and `opencode plugin remove <package>`.
+4. Copy the root `LICENSE` into the package.
+5. Add `<id>` to the `package` options in `.github/workflows/release.yml`.
 
-`pnpm check` fails until the manifest passes release validation and the workflow lists the package.
+`pnpm check` fails until the manifest passes release validation, the README has its agent section, and the workflow
+lists the package.
 
 ## Releasing
 

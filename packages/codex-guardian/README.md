@@ -86,6 +86,35 @@ Status does not trigger inference. Native availability and OAuth diagnostics are
 
 After changing plugin source, run `pnpm build` in `packages/codex-guardian` again. Configuration changes normally reload automatically; changes to an external local plugin may require `opencode service restart`.
 
+## For agents
+
+Follow these steps when a user asks you to install this plugin. It changes how OpenCode handles permission requests,
+so don't loosen any security setting the user didn't explicitly ask to change.
+
+1. **Check the OpenAI connection.** Native reviews need the built-in OpenAI provider signed in with ChatGPT
+   (`opencode auth list` shows an `OpenAI` row). API-key connections are not supported. If it's missing, ask the user to
+   run `/connect` in OpenCode and choose a ChatGPT sign-in; don't start an OAuth flow yourself.
+2. **Install it globally** with OpenCode's plugin command. It installs the package and adds it to the user's global
+   config, which is what persistent enforcement needs. Don't edit OpenCode's database or run `npm install` yourself.
+
+   ```sh
+   opencode plugin add @fatihdogmus/opencode-codex-guardian
+   ```
+
+   The plain entry loads the hardened baseline shown in [Install and enable](#install-and-enable); no options are
+   needed. If the user asks for options, replace the entry in `~/.config/opencode/opencode.json(c)` with the object form
+   and keep every other entry. Options can only tighten security.
+3. **Leave the trusted policy alone** unless the user asks to change it. `~/.config/opencode/codex-guardian.json` is the
+   only place that can disable reviews or switch to shadow mode. When the user does ask, write exactly what they asked
+   for, then `chmod 600` the file; it must be a regular file the user owns, not a symlink.
+4. **Verify** that `opencode plugin list` has a row with the ID `opencode-auto-review`. Config changes reload on their
+   own; don't restart OpenCode or its service.
+5. **Tell the user** that `ask`-level permission requests are now reviewed by Codex Guardian, which allows, denies, or
+   leaves them for their approval, and that `/auto-review status` in OpenCode shows its state. Free usage is
+   unverified, as described above.
+
+To remove it: `opencode plugin remove @fatihdogmus/opencode-codex-guardian`.
+
 ## How native reviews work
 
 1. Correlate the proposed action with the main OpenAI/Codex response.

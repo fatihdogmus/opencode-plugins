@@ -8,6 +8,8 @@ for layout, adding a plugin, and releasing.
 - Run `pnpm check` before finishing a change; run `pnpm package <id>` when a change affects what a package ships.
 - Never bump versions, tag, or publish by hand. The Release workflow does it; `scripts/release/` enforces the rules and
   `test/` tests them.
+- Every package README has a `## For agents` install section (enforced by `test/readme.test.mjs`). Update it whenever
+  install steps, prerequisites, options, or the plugin ID change.
 - Package manifests: keep `name`, `license`, `publishConfig`, and `repository` (`url` + `directory`) as
   `scripts/release/validate.mjs` requires.
 - Dependency build scripts are denied by default; only add an `allowBuilds` entry in `pnpm-workspace.yaml` when a

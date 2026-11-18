@@ -28,6 +28,43 @@ global config, and the TUI loads the TUI part of every plugin its server runs:
 
 Connect an OpenAI account with `/connect` if you haven't. The TUI also needs `ffmpeg` (`brew install ffmpeg`).
 
+## For agents
+
+Follow these steps when a user asks you to install this plugin.
+
+1. **Check the OpenAI account.** `opencode auth list` must show an `OpenAI` row. If it doesn't, ask the user to run
+   `/connect` in OpenCode and sign in; don't start an OAuth flow yourself.
+2. **Check ffmpeg** (only needed for the TUI) with `ffmpeg -version`. If it's missing, ask before installing it
+   (`brew install ffmpeg` on macOS, the distribution's `ffmpeg` package on Linux, `winget install Gyan.FFmpeg` on
+   Windows).
+3. **Install it globally** with OpenCode's plugin command. It installs the package and adds it to the user's global
+   config. Never add this plugin to a project config: OpenCode Desktop loads GUI parts only from the global config.
+   Don't edit OpenCode's database or run `npm install` yourself.
+
+   ```sh
+   opencode plugin add @fatihdogmus/opencode-voice-input
+   ```
+
+   Set [options](#options) such as `language` only if the user asks; that means replacing the entry in
+   `~/.config/opencode/opencode.json(c)` with the object form and keeping every other entry.
+4. **Verify** that `opencode plugin list` has a row with the ID `voice-input`. Config changes reload on their own;
+   don't restart OpenCode or its service. Optionally, check transcription end to end. This sends a short clip through
+   the user's OpenAI account; on macOS:
+
+   ```sh
+   say -o /tmp/voice-check.aiff "hello from voice input"
+   ffmpeg -loglevel error -y -i /tmp/voice-check.aiff -c:a libopus /tmp/voice-check.webm
+   opencode api post /api/rpc/voice-input/transcribe \
+     --data "{\"input\":{\"audio\":\"$(base64 < /tmp/voice-check.webm | tr -d '\n')\",\"mimeType\":\"audio/webm\"}}"
+   ```
+
+   The reply's `output.text` should contain the sentence, and `output.account` names the account used.
+5. **Tell the user** how to use it: the mic button next to send (or `⌘⌥M`) in OpenCode Desktop, and `ctrl+x v` (or
+   `/dictate`) in the TUI. macOS asks for microphone access the first time they record. A TUI that was already open may
+   need to be reopened to show the mic.
+
+To remove it: `opencode plugin remove @fatihdogmus/opencode-voice-input`.
+
 ## TUI
 
 The same package has a `./tui` part (`src/tui.tsx`), which the TUI loads automatically because the plugin is in the

@@ -34,6 +34,27 @@ working either way.
 
 OpenCode installs the package itself; no separate `npm install` is needed.
 
+## For agents
+
+Follow these steps when a user asks you to install this plugin.
+
+1. **Install it** with OpenCode's plugin command. It installs the package and adds it to the user's global config, so
+   it records turns in every project. Don't edit OpenCode's database or run `npm install` yourself.
+
+   ```sh
+   opencode plugin add @fatihdogmus/opencode-agentic-review
+   ```
+
+   If the user wants it for one project only, add `"@fatihdogmus/opencode-agentic-review"` to `plugins` in that
+   project's `opencode.json(c)` instead, keeping every existing entry. Add `mcpUrl` (see [Options](#options)) only if
+   the user's IDE serves MCP somewhere other than the default.
+2. **Verify** that `opencode plugin list` has a row with the ID `agentic-review`. Config changes reload on their own;
+   don't restart OpenCode or its service.
+3. **Tell the user** to install the Agentic Review plugin in IntelliJ and enable the IDE's built-in MCP server if they
+   haven't. The plugin needs nothing else, and OpenCode keeps working while the IDE is closed.
+
+To remove it: `opencode plugin remove @fatihdogmus/opencode-agentic-review`.
+
 ## Options
 
 ```jsonc
