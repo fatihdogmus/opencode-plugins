@@ -5,6 +5,7 @@
 | Package | Description |
 | --- | --- |
 | [`@fatihdogmus/opencode-codex-guardian`](packages/codex-guardian) | Codex Guardian permission reviews for OpenCode V2 |
+| [`@fatihdogmus/opencode-project-tab-groups`](packages/project-tab-groups) | Groups OpenCode Desktop's tabs by project, with colors, labels and a grouped switcher |
 | [`@fatihdogmus/opencode-voice-input`](packages/voice-input) | Voice prompts for OpenCode Desktop and the TUI, transcribed with your OpenAI account |
 | [`@fatihdogmus/opencode-agentic-review`](packages/agentic-review) | Turn snapshots for the Agentic Review IntelliJ plugin |
 

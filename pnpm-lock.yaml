@@ -219,6 +219,28 @@ importers:
         specifier: ^6.0.2
         version: 6.0.3
 
+  packages/project-tab-groups:
+    dependencies:
+      '@opencode/plugin':
+        specifier: 2.2.0
+        version: 2.2.0(@opencode/theme@2.2.0(typescript@7.0.2)(web-tree-sitter@0.25.10))(@opentelemetry/semantic-conventions@1.45.0)(@opentui/core@0.7.0(typescript@7.0.2)(web-tree-sitter@0.25.10))(electron@39.8.10)(redis@6.3.1(@opentelemetry/api@1.9.0))(solid-js@1.9.19)(vite-plugin-solid@2.11.16(solid-js@1.9.19)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(tsx@4.23.15)))(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(tsx@4.23.15))
+      effect:
+        specifier: 4.0.1
+        version: 4.0.1
+    devDependencies:
+      solid-js:
+        specifier: ^1.9.15
+        version: 1.9.19
+      typescript:
+        specifier: ^7.0.2
+        version: 7.0.2
+      vite:
+        specifier: ^8.3.5
+        version: 8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(tsx@4.23.15)
+      vite-plugin-solid:
+        specifier: ^2.11.0
+        version: 2.11.16(solid-js@1.9.19)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(tsx@4.23.15))
+
   packages/voice-input:
     dependencies:
       '@opencode/plugin':
@@ -4166,6 +4188,30 @@ snapshots:
       - supports-color
       - utf-8-validate
 
+  '@opencode/plugin@2.2.0(@opencode/theme@2.2.0(typescript@7.0.2)(web-tree-sitter@0.25.10))(@opentelemetry/semantic-conventions@1.45.0)(@opentui/core@0.7.0(typescript@7.0.2)(web-tree-sitter@0.25.10))(electron@39.8.10)(redis@6.3.1(@opentelemetry/api@1.9.0))(solid-js@1.9.19)(vite-plugin-solid@2.11.16(solid-js@1.9.19)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(tsx@4.23.15)))(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(tsx@4.23.15))':
+    dependencies:
+      '@ai-sdk/provider': 3.0.8
+      '@opencode/ai': 2.2.0
+      '@opencode/client': 2.2.0(effect@4.0.1)(solid-js@1.9.19)
+      '@opencode/protocol': 2.2.0
+      '@opencode/schema': 2.2.0
+      '@opencode/util': 2.2.0(@opentelemetry/semantic-conventions@1.45.0)(redis@6.3.1(@opentelemetry/api@1.9.0))
+      effect: 4.0.1
+    optionalDependencies:
+      '@opencode/theme': 2.2.0(typescript@7.0.2)(web-tree-sitter@0.25.10)
+      '@opentui/core': 0.7.0(typescript@7.0.2)(web-tree-sitter@0.25.10)
+      electron: 39.8.10
+      solid-js: 1.9.19
+      vite: 8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(tsx@4.23.15)
+      vite-plugin-solid: 2.11.16(solid-js@1.9.19)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(tsx@4.23.15))
+    transitivePeerDependencies:
+      - '@opentelemetry/sdk-trace-web'
+      - '@opentelemetry/semantic-conventions'
+      - bufferutil
+      - redis
+      - supports-color
+      - utf-8-validate
+
   '@opencode/plugin@2.3.2(@opentelemetry/semantic-conventions@1.45.0)(electron@39.8.10)(redis@6.3.1(@opentelemetry/api@1.9.0))(solid-js@1.9.19)(vite-plugin-solid@2.11.16(solid-js@1.9.19)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(tsx@4.23.15)))(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(tsx@4.23.15))':
     dependencies:
       '@ai-sdk/provider': 3.0.8
@@ -6383,7 +6429,6 @@ snapshots:
       vitefu: 1.1.4(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(tsx@4.23.15))
     transitivePeerDependencies:
       - supports-color
-    optional: true
 
   vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15):
     dependencies:
@@ -6410,7 +6455,6 @@ snapshots:
       esbuild: 0.28.2
       fsevents: 2.3.3
       tsx: 4.23.15
-    optional: true
 
   vitefu@1.1.4(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)):
     optionalDependencies:
@@ -6419,7 +6463,6 @@ snapshots:
   vitefu@1.1.4(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(tsx@4.23.15)):
     optionalDependencies:
       vite: 8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(tsx@4.23.15)
-    optional: true
 
   walk-up-path@4.0.0: {}
 

@@ -10,6 +10,7 @@ on:
         options:
           - agentic-review
           - codex-guardian
+          - project-tab-groups
           - voice-input
       bump:
         description: Semantic version increment

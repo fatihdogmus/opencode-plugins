@@ -1,16 +1,45 @@
 {
-  "name": "project-tab-groups",
+  "name": "@fatihdogmus/opencode-project-tab-groups",
   "version": "0.1.0",
-  "private": true,
+  "description": "OpenCode Desktop plugin that keeps tabs grouped by project, colors and labels each group, and adds a grouped tab switcher",
+  "license": "MIT",
   "type": "module",
-  "description": "OpenCode Desktop GUI plugin: keeps shell tabs grouped by project, colors and labels each group, and adds a grouped tab switcher.",
+  "engines": {
+    "node": ">=26"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fatihdogmus/opencode-plugins.git",
+    "directory": "packages/project-tab-groups"
+  },
+  "homepage": "https://github.com/fatihdogmus/opencode-plugins/tree/main/packages/project-tab-groups#readme",
+  "bugs": {
+    "url": "https://github.com/fatihdogmus/opencode-plugins/issues"
+  },
+  "keywords": [
+    "opencode",
+    "opencode-desktop",
+    "tabs",
+    "projects",
+    "plugin"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "exports": {
+    ".": "./src/index.ts",
     "./gui-experimental": "./dist/gui-experimental.cjs"
   },
+  "files": [
+    "src/index.ts",
+    "dist"
+  ],
   "scripts": {
     "build": "vite build",
     "dev": "vite build --watch",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "check": "pnpm typecheck && pnpm build"
   },
   "dependencies": {
     "@opencode/plugin": "2.2.0",
