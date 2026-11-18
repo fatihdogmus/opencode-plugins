@@ -65,20 +65,41 @@ lists the package.
 
 Run the **Release** workflow on `main` and choose the package and a `patch`, `minor` or `major` bump. It:
 
-1. checks npm credentials, bumps the package's `version`, and requires a new `<id>-vX.Y.Z` tag and a version that
-   isn't on npm yet;
+1. bumps the package's `version`, and requires a new `<id>-vX.Y.Z` tag and a version that isn't on npm yet;
 2. runs the release-tooling tests and the package's `check`, packs it, and smoke-tests the tarball;
 3. commits only that package's `package.json` as `github-actions[bot]` and tags it, locally;
 4. checks that `main` hasn't moved, then publishes the tested tarball to npm with provenance;
 5. only after publishing succeeds, pushes the commit and tag atomically and creates a GitHub release with notes since
    the package's previous tag.
 
-One-time setup in the GitHub repository:
+Publishing uses npm [trusted publishing](https://docs.npmjs.com/trusted-publishers): npm accepts the Release
+workflow's GitHub OIDC identity, so no npm token is stored anywhere. Each package needs it set up once on npmjs.com
+(the package → **Settings** → **Trusted Publisher** → **GitHub Actions**):
 
-- an `npm` environment, and an `NPM_TOKEN` secret (repository- or environment-scoped): an npm granular token with
-  read/write access to the `@fatihdogmus` scope and **Bypass 2FA**, allowed to create new packages for first releases;
-- branch and tag rules that let the workflow's `GITHUB_TOKEN` push to `main` and create tags. The workflow never
-  force-pushes.
+| Field | Value |
+| --- | --- |
+| Organization or user | `fatihdogmus` |
+| Repository | `opencode-plugins` |
+| Workflow filename | `release.yml` |
+| Environment | `npm` |
+| Allowed actions | `npm publish` |
+
+A new trusted publisher must be used for a successful publish within 2 days, or it expires. Once it works, set the
+package's publishing access to disallow tokens.
+
+A package must already exist on npm before it can have a trusted publisher. For a new package, publish its first
+version (`0.1.0`) from your machine with your own 2FA:
+
+```sh
+pnpm package <id>
+npm publish artifacts/fatihdogmus-opencode-<id>-0.1.0.tgz --access public
+```
+
+Then push a `<id>-v0.1.0` tag on the commit you published, add the trusted publisher, and use the Release workflow from
+then on.
+
+The GitHub repository needs an `npm` environment, and branch and tag rules that let the workflow's `GITHUB_TOKEN` push to
+`main` and create tags. The workflow never force-pushes.
 
 Nothing is pushed unless npm publishing succeeds, so a failed check or publish leaves `main` untouched; fix the cause and
 release again. npm and GitHub are still not atomic: if the push fails after publishing (for example, because `main`

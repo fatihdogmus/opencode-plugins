@@ -6,8 +6,9 @@ for layout, adding a plugin, and releasing.
 - Use pnpm, never npm, for installs and scripts (`pnpm install`, `pnpm --filter ./packages/<id> <script>`). The only
   npm calls are the smoke test's consumer-style install and `npm publish` in the Release workflow.
 - Run `pnpm check` before finishing a change; run `pnpm package <id>` when a change affects what a package ships.
-- Never bump versions, tag, or publish by hand. The Release workflow does it; `scripts/release/` enforces the rules and
-  `test/` tests them.
+- Never bump versions, tag, or publish by hand. The Release workflow does it through npm trusted publishing (no npm
+  token); `scripts/release/` enforces the rules and `test/` tests them. The only exception is a new package's first
+  version, which the user publishes from their machine with 2FA (see README "Releasing").
 - Every package README has a `## For agents` install section (enforced by `test/readme.test.mjs`). Update it whenever
   install steps, prerequisites, options, or the plugin ID change.
 - Package manifests: keep `name`, `license`, `publishConfig`, and `repository` (`url` + `directory`) as

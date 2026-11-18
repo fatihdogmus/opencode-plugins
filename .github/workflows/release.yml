@@ -57,15 +57,8 @@ jobs:
         run: |
           git fetch --no-tags origin main
           test "$(git rev-parse HEAD)" = "$(git rev-parse FETCH_HEAD)"
-      - name: Check npm credentials before changing the version
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          if [ -z "$NODE_AUTH_TOKEN" ]; then
-            echo "Set the NPM_TOKEN secret before releasing."
-            exit 1
-          fi
-          npm whoami --registry https://registry.npmjs.org/
+      - name: Require npm with trusted publishing support
+        run: node -e 'const [a, b, c] = process.argv[1].split(".").map(Number); if (a * 1e6 + b * 1e3 + c < 11005001) { console.error(`npm ${process.argv[1]} is too old for trusted publishing; it needs 11.5.1 or later`); process.exit(1) }' "$(npm --version)"
       - run: pnpm install --frozen-lockfile
       - name: Bump the package version
         id: bump
@@ -134,9 +127,9 @@ jobs:
         run: |
           git fetch --no-tags origin main
           test "$(git rev-parse HEAD~1)" = "$(git rev-parse FETCH_HEAD)"
+      # Trusted publishing: npm authenticates this workflow through GitHub's OIDC token, so no npm token is stored.
       - name: Publish tested tarball to npm
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           TARBALL: ${{ steps.pack.outputs.tarball }}
         run: npm publish "$TARBALL" --ignore-scripts --access public --provenance --tag latest --registry https://registry.npmjs.org/
       - name: Push the version commit and tag

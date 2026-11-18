@@ -29,7 +29,7 @@ test("the release workflow offers exactly the packages in packages/", async () =
 test("release checks everything first, publishes to npm, and only then pushes and creates the GitHub release", () => {
     const steps = [
         "Require the current main commit",
-        "Check npm credentials before changing the version",
+        "Require npm with trusted publishing support",
         "Bump the package version",
         "Require a new release tag",
         "Require an unpublished npm version",
@@ -47,6 +47,12 @@ test("release checks everything first, publishes to npm, and only then pushes an
     assert.ok(steps.every((position, index) => position >= 0 && (index === 0 || position > steps[index - 1])))
     assert.match(workflow, /git push --atomic/)
     assert.doesNotMatch(workflow, /git push[^\n]*--force/)
+})
+
+test("npm publishing uses trusted publishing, not a stored npm token", () => {
+    assert.doesNotMatch(workflow, /NPM_TOKEN|NODE_AUTH_TOKEN|secrets\./)
+    assert.match(workflow, /^      id-token: write$/m)
+    assert.match(workflow, /^    environment: npm$/m)
 })
 
 test("nothing is pushed until npm publishing has succeeded", () => {
