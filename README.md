@@ -65,11 +65,13 @@ lists the package.
 
 Run the **Release** workflow on `main` and choose the package and a `patch`, `minor` or `major` bump. It:
 
-1. checks npm credentials, bumps the package's `version`, and requires a new `<id>-vX.Y.Z` tag;
+1. checks npm credentials, bumps the package's `version`, and requires a new `<id>-vX.Y.Z` tag and a version that
+   isn't on npm yet;
 2. runs the release-tooling tests and the package's `check`, packs it, and smoke-tests the tarball;
-3. commits only that package's `package.json` as `github-actions[bot]` and pushes the commit and tag atomically;
-4. publishes the tested tarball to npm with provenance, then creates a GitHub release with notes since the package's
-   previous tag.
+3. commits only that package's `package.json` as `github-actions[bot]` and tags it, locally;
+4. checks that `main` hasn't moved, then publishes the tested tarball to npm with provenance;
+5. only after publishing succeeds, pushes the commit and tag atomically and creates a GitHub release with notes since
+   the package's previous tag.
 
 One-time setup in the GitHub repository:
 
@@ -78,9 +80,11 @@ One-time setup in the GitHub repository:
 - branch and tag rules that let the workflow's `GITHUB_TOKEN` push to `main` and create tags. The workflow never
   force-pushes.
 
-Checks pass before anything is pushed. npm and GitHub publication are not atomic: if publishing fails after the push,
-the version commit and tag remain; publish the saved tarball from the workflow artifact rather than bumping again. An
-npm version cannot be overwritten.
+Nothing is pushed unless npm publishing succeeds, so a failed check or publish leaves `main` untouched; fix the cause and
+release again. npm and GitHub are still not atomic: if the push fails after publishing (for example, because `main`
+moved), npm has the version but `main` doesn't. The next release then stops at **Require an unpublished npm version**
+and explains how to record the version: set the package's `version` to it and push a matching `<id>-vX.Y.Z` tag. An npm
+version cannot be overwritten.
 
 ## License
 

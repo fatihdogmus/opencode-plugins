@@ -83,6 +83,23 @@ jobs:
             exit 1
           fi
           echo "previous=$(git tag --list "$PACKAGE-v*" --sort=-v:refname | head -n 1)" >> "$GITHUB_OUTPUT"
+      - name: Require an unpublished npm version
+        env:
+          PACKAGE_NAME: ${{ steps.bump.outputs.name }}
+          VERSION: ${{ steps.bump.outputs.version }}
+        run: |
+          if published=$(npm view "$PACKAGE_NAME@$VERSION" version --registry https://registry.npmjs.org/ 2>npm-view.err); then
+            if [ -n "$published" ]; then
+              echo "$PACKAGE_NAME@$VERSION is already on npm, but main doesn't record it. An earlier release probably"
+              echo "published it and then failed to push. Set packages/$PACKAGE/package.json to $VERSION, tag it"
+              echo "$PACKAGE-v$VERSION on main, then release again."
+              exit 1
+            fi
+          elif ! grep -q E404 npm-view.err; then
+            cat npm-view.err
+            exit 1
+          fi
+          rm -f npm-view.err
       - name: Check the repository release tooling
         run: node --test test/*.test.mjs
       - name: Check the package
@@ -102,9 +119,8 @@ jobs:
           path: artifacts/*.tgz
           if-no-files-found: error
           retention-days: 14
-      - name: Commit version and push matching tag
+      - name: Commit and tag the version locally
         env:
-          GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ steps.bump.outputs.tag }}
         run: |
           git diff --check
@@ -114,13 +130,22 @@ jobs:
           git add "packages/$PACKAGE/package.json"
           git commit -m "chore(release): $RELEASE_TAG"
           git tag -a "$RELEASE_TAG" -m "Release $RELEASE_TAG"
-          gh auth setup-git
-          git push --atomic origin HEAD:main "refs/tags/$RELEASE_TAG"
+      - name: Require main to be unchanged before publishing
+        run: |
+          git fetch --no-tags origin main
+          test "$(git rev-parse HEAD~1)" = "$(git rev-parse FETCH_HEAD)"
       - name: Publish tested tarball to npm
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           TARBALL: ${{ steps.pack.outputs.tarball }}
         run: npm publish "$TARBALL" --ignore-scripts --access public --provenance --tag latest --registry https://registry.npmjs.org/
+      - name: Push the version commit and tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.bump.outputs.tag }}
+        run: |
+          gh auth setup-git
+          git push --atomic origin HEAD:main "refs/tags/$RELEASE_TAG"
       - name: Publish GitHub release
         env:
           GH_TOKEN: ${{ github.token }}

@@ -26,24 +26,34 @@ test("the release workflow offers exactly the packages in packages/", async () =
     assert.deepEqual(choices("package"), await listPackages())
 })
 
-test("release checks credentials and tests before pushing, then publishes npm before GitHub", () => {
+test("release checks everything first, publishes to npm, and only then pushes and creates the GitHub release", () => {
     const steps = [
         "Require the current main commit",
         "Check npm credentials before changing the version",
         "Bump the package version",
         "Require a new release tag",
+        "Require an unpublished npm version",
         "Check the repository release tooling",
         "Check the package",
         "Pack and smoke-test the package",
         "Validate tested package",
         "Save tested package for recovery",
-        "Commit version and push matching tag",
+        "Commit and tag the version locally",
+        "Require main to be unchanged before publishing",
         "Publish tested tarball to npm",
+        "Push the version commit and tag",
         "Publish GitHub release",
-    ].map((step) => workflow.indexOf(step))
+    ].map((step) => workflow.indexOf(`name: ${step}`) >= 0 ? workflow.indexOf(`name: ${step}`) : workflow.indexOf(step))
     assert.ok(steps.every((position, index) => position >= 0 && (index === 0 || position > steps[index - 1])))
     assert.match(workflow, /git push --atomic/)
     assert.doesNotMatch(workflow, /git push[^\n]*--force/)
+})
+
+test("nothing is pushed until npm publishing has succeeded", () => {
+    const publish = workflow.indexOf("npm publish ")
+    const pushes = [...workflow.matchAll(/git push/g)].map((match) => match.index)
+    assert.ok(publish > 0 && pushes.length > 0)
+    assert.ok(pushes.every((position) => position > publish), "Every git push must come after npm publish")
 })
 
 const shellLines = (source) => {
