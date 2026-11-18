@@ -1,6 +1,6 @@
 import assert from "node:assert/strict"
 import { execFileSync } from "node:child_process"
-import { appendFile, mkdir, readdir } from "node:fs/promises"
+import { appendFile, mkdir, readdir, rm } from "node:fs/promises"
 import { join, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
 import { assertPackageId, listPackages, readManifest, ROOT } from "./packages.mjs"
@@ -12,11 +12,13 @@ const ARTIFACTS = join(ROOT, "artifacts")
 export async function pack(id) {
     assertPackageId(id)
     const manifest = await readManifest(id)
+    const expected = `${manifest.name.replace(/^@/, "").replace("/", "-")}-${manifest.version}.tgz`
     await mkdir(ARTIFACTS, { recursive: true })
+    // A tarball from an earlier local run would hide whether this pack produced it.
+    await rm(join(ARTIFACTS, expected), { force: true })
     const before = new Set(await readdir(ARTIFACTS))
     execFileSync("pnpm", ["--filter", `./packages/${id}`, "pack", "--pack-destination", ARTIFACTS], { cwd: ROOT, stdio: "pipe" })
     const created = (await readdir(ARTIFACTS)).filter((file) => file.endsWith(".tgz") && !before.has(file))
-    const expected = `${manifest.name.replace(/^@/, "").replace("/", "-")}-${manifest.version}.tgz`
     assert.deepEqual(created, [expected], `Expected pnpm pack to create ${expected}`)
     return join(ARTIFACTS, expected)
 }
