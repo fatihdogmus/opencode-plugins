@@ -35,7 +35,10 @@
     "./gui-experimental": "./dist/gui-experimental.cjs"
   },
   "files": [
-    "src",
+    "src/index.ts",
+    "src/rpc.ts",
+    "src/tui.tsx",
+    "src/tui-audio.ts",
     "dist"
   ],
   "scripts": {
@@ -47,6 +50,11 @@
   "dependencies": {
     "@opencode/plugin": "2.2.0",
     "effect": "4.0.1"
+  },
+  "peerDependencies": {
+    "@opentui/core": ">=0.6.6",
+    "@opentui/solid": ">=0.6.6",
+    "solid-js": ">=1.9.0"
   },
   "devDependencies": {
     "@opencode/theme": "2.2.0",

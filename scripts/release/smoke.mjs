@@ -1,6 +1,7 @@
 import assert from "node:assert/strict"
 import { execFileSync } from "node:child_process"
 import { existsSync } from "node:fs"
+import { builtinModules } from "node:module"
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises"
 import { tmpdir } from "node:os"
 import { join, resolve } from "node:path"
@@ -9,6 +10,30 @@ import { packageDirectory, releaseTag } from "./packages.mjs"
 import { validateRelease } from "./validate.mjs"
 
 const ALWAYS = ["package.json", "README.md", "LICENSE"]
+
+const SOURCE = /\.(?:[cm]?[jt]s|[jt]sx)$/
+const IMPORT = /(?:\bfrom\s*|\bimport\s*\(\s*|^\s*import\s*)["']([^"']+)["']/gm
+
+const packageOf = (specifier) => specifier.split("/").slice(0, specifier.startsWith("@") ? 2 : 1).join("/")
+
+/**
+ * Shipped source files run in the user's install, where only dependencies and peerDependencies exist. OpenCode compiles a
+ * TUI part's JSX into imports from @opentui/solid, so a shipped .tsx file needs it declared too.
+ */
+export function undeclaredImports(manifest, sources) {
+    const declared = new Set([...Object.keys(manifest.dependencies ?? {}), ...Object.keys(manifest.peerDependencies ?? {})])
+    const missing = new Set()
+    for (const [file, text] of Object.entries(sources)) {
+        const needed = [...text.matchAll(IMPORT)].map((match) => match[1])
+        if (file.endsWith("x") && /<[a-z][\w-]*[\s>/]/.test(text)) needed.push("@opentui/solid")
+        for (const specifier of needed) {
+            if (specifier.startsWith(".") || specifier.startsWith("/") || specifier.startsWith("node:")) continue
+            if (builtinModules.includes(specifier)) continue
+            if (!declared.has(packageOf(specifier))) missing.add(`${file}: ${packageOf(specifier)}`)
+        }
+    }
+    return [...missing]
+}
 
 const exportTargets = (exports) => {
     if (typeof exports === "string") return [exports]
@@ -35,6 +60,14 @@ export async function smoke(id, tarball) {
             ALWAYS.includes(file) || allowed.some((entry) => file === entry || file.startsWith(`${entry}/`)),
             `Unexpected file in the package: ${file}`,
         )
+
+    const shipped = Object.fromEntries(
+        files
+            .filter((file) => SOURCE.test(file) && !file.startsWith("dist/"))
+            .map((file) => [file, execFileSync("tar", ["-xOf", archive, `package/${file}`], { encoding: "utf8" })]),
+    )
+    const undeclared = undeclaredImports(manifest, shipped)
+    assert.deepEqual(undeclared, [], `Shipped sources import packages the manifest doesn't declare:\n${undeclared.join("\n")}`)
 
     const directory = await mkdtemp(join(tmpdir(), `${id}-smoke-`))
     const env = Object.fromEntries(Object.entries(process.env).filter(([key]) => key.toLowerCase() !== "npm_config_allow_scripts"))

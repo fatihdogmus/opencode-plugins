@@ -13,6 +13,10 @@ for layout, adding a plugin, and releasing.
   install steps, prerequisites, options, or the plugin ID change.
 - Package manifests: keep `name`, `license`, `publishConfig`, and `repository` (`url` + `directory`) as
   `scripts/release/validate.mjs` requires.
+- Everything a package ships runs in the user's install, where devDependencies don't exist. Declare every runtime import
+  in `dependencies`, or in `peerDependencies` for modules OpenCode provides; a TUI part with JSX needs `@opentui/solid`,
+  `@opentui/core` and `solid-js` as peers. The smoke test checks shipped sources for this, and only a test of the
+  installed tarball (not the workspace checkout) proves a TUI or GUI part works.
 - Dependency build scripts are denied by default; only add an `allowBuilds` entry in `pnpm-workspace.yaml` when a
   package really needs its install script.
 - OpenCode plugin docs: https://opencode.ai/docs/build/plugins (server, TUI, GUI, RPC). Write V2 plugins only
