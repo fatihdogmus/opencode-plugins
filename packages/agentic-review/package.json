@@ -1,6 +1,6 @@
 {
   "name": "@fatihdogmus/opencode-agentic-review",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "OpenCode V2 plugin that records agent turns for the Agentic Review IntelliJ plugin through its MCP server",
   "license": "MIT",
   "type": "module",
