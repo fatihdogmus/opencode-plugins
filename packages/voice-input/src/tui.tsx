@@ -1,5 +1,5 @@
 /** @jsxImportSource @opentui/solid */
-import { createSignal } from "solid-js"
+import { createSignal, Show } from "solid-js"
 import { Plugin } from "@opencode/plugin/tui"
 import { VoiceRpc } from "./rpc"
 import { clipboard, FfmpegRecorder } from "./tui-audio"
@@ -152,8 +152,7 @@ export default Plugin.define({
       ],
     }))
 
-    const shortcut = () => context.keymap.shortcuts(COMMAND)[0]
-
+    // The footer shows nothing while idle; it only shows that the mic is recording or transcribing.
     const removeSlot = context.ui.slot({
       append: "prompt.footer.status",
       render: () => {
@@ -167,19 +166,16 @@ export default Plugin.define({
             case "starting":
               return "◌ mic…"
             default:
-              return shortcut() ? `🎙 ${shortcut()}` : "🎙"
+              return ""
           }
         }
-        const color = () =>
-          phase() === "recording"
-            ? theme.text.feedback.error.base
-            : phase() === "idle"
-              ? theme.text.muted
-              : theme.text.feedback.warning.base
+        const color = () => (phase() === "recording" ? theme.text.feedback.error.base : theme.text.feedback.warning.base)
         return (
-          <text fg={color()} onMouseDown={() => toggle()}>
-            {label()}
-          </text>
+          <Show when={phase() !== "idle"}>
+            <text fg={color()} onMouseDown={() => toggle()}>
+              {label()}
+            </text>
+          </Show>
         )
       },
     })

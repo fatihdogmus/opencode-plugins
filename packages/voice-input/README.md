@@ -61,7 +61,7 @@ Follow these steps when a user asks you to install this plugin.
    The reply's `output.text` should contain the sentence, and `output.account` names the account used.
 5. **Tell the user** how to use it: the mic button next to send (or `⌘⌥M`) in OpenCode Desktop, and `ctrl+x v` (or
    `/dictate`) in the TUI. macOS asks for microphone access the first time they record. A TUI that was already open may
-   need to be reopened to show the mic.
+   need to be reopened before the shortcut works.
 
 To remove it: `opencode plugin remove @fatihdogmus/opencode-voice-input`.
 
@@ -70,9 +70,10 @@ To remove it: `opencode plugin remove @fatihdogmus/opencode-voice-input`.
 The same package has a `./tui` part (`src/tui.tsx`), which the TUI loads automatically because the plugin is in the
 server's config.
 
-- **`🎙 ctrl+x v`** in the prompt footer: click it or press `<leader>v` to start recording; it shows `● 0:07 stop`
-  while recording. Also `/dictate`, and **Cancel voice dictation** / **Copy last dictation** in the command palette.
-  Rebind it in `cli.json` under `keybinds` as `"voice-input.dictate"`.
+- **`<leader>v`** (`ctrl+x v` by default) or `/dictate` starts recording and stops it. The prompt footer shows
+  nothing while idle; it shows `● 0:07 stop` while recording and `◌ transcribing…` after. **Cancel voice dictation** and
+  **Copy last dictation** are in the command palette. Rebind the key in `cli.json` under `keybinds` as
+  `"voice-input.dictate"`.
 - Recording uses `ffmpeg` (`brew install ffmpeg`) with the system default microphone (macOS AVFoundation, Linux
   PulseAudio). macOS asks for microphone access for your terminal app the first time.
 - The TUI plugin API cannot write to the prompt, so the transcript is put on the clipboard and the TUI's own
@@ -134,7 +135,8 @@ opencode api post /api/rpc/voice-input/transcribe --data '{"input":{"audio":"<ba
 - `src/rpc.ts`: the RPC contract.
 - `src/gui.tsx`: window part: recorder, commands, pill, inserting the text.
 - `src/inject.tsx`: the mic button next to the send button.
-- `src/tui.tsx`, `src/tui-audio.ts`: TUI part: footer mic, commands, ffmpeg recorder, clipboard paste.
+- `src/tui.tsx`, `src/tui-audio.ts`: TUI part: shortcut and commands, recording status, ffmpeg recorder, clipboard
+  paste.
 - `src/main.ts`, `src/contract.ts`: asks macOS for microphone access from the app's main process.
 
 ## Develop
