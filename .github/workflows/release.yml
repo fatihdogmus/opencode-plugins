@@ -1,0 +1,134 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: Package to release
+        required: true
+        type: choice
+        options:
+          - agentic-review
+          - codex-guardian
+          - voice-input
+      bump:
+        description: Semantic version increment
+        required: true
+        type: choice
+        default: patch
+        options:
+          - patch
+          - minor
+          - major
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: npm
+    permissions:
+      contents: write
+      id-token: write
+    env:
+      GH_REPO: ${{ github.repository }}
+      PACKAGE: ${{ inputs.package }}
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: 26
+          registry-url: https://registry.npmjs.org/
+          package-manager-cache: false
+      - name: Require the current main commit
+        run: |
+          git fetch --no-tags origin main
+          test "$(git rev-parse HEAD)" = "$(git rev-parse FETCH_HEAD)"
+      - name: Check npm credentials before changing the version
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "Set the NPM_TOKEN secret before releasing."
+            exit 1
+          fi
+          npm whoami --registry https://registry.npmjs.org/
+      - run: pnpm install --frozen-lockfile
+      - name: Bump the package version
+        id: bump
+        env:
+          VERSION_BUMP: ${{ inputs.bump }}
+        run: node scripts/release/bump.mjs "$PACKAGE" "$VERSION_BUMP"
+      - name: Require a new release tag
+        id: tags
+        env:
+          RELEASE_TAG: ${{ steps.bump.outputs.tag }}
+        run: |
+          git fetch --tags --force origin
+          if git show-ref --verify --quiet "refs/tags/$RELEASE_TAG"; then
+            echo "Release tag already exists: $RELEASE_TAG"
+            exit 1
+          fi
+          echo "previous=$(git tag --list "$PACKAGE-v*" --sort=-v:refname | head -n 1)" >> "$GITHUB_OUTPUT"
+      - name: Check the repository release tooling
+        run: node --test test/*.test.mjs
+      - name: Check the package
+        run: pnpm --filter "./packages/$PACKAGE" check
+      - name: Pack and smoke-test the package
+        id: pack
+        run: node scripts/release/pack.mjs "$PACKAGE"
+      - name: Validate tested package
+        env:
+          RELEASE_TAG: ${{ steps.bump.outputs.tag }}
+          TARBALL: ${{ steps.pack.outputs.tarball }}
+        run: node scripts/release/validate.mjs "$PACKAGE" "$RELEASE_TAG" "$TARBALL"
+      - name: Save tested package for recovery
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: ${{ inputs.package }}-release
+          path: artifacts/*.tgz
+          if-no-files-found: error
+          retention-days: 14
+      - name: Commit version and push matching tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.bump.outputs.tag }}
+        run: |
+          git diff --check
+          git diff --exit-code -- . ":!packages/$PACKAGE/package.json"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "packages/$PACKAGE/package.json"
+          git commit -m "chore(release): $RELEASE_TAG"
+          git tag -a "$RELEASE_TAG" -m "Release $RELEASE_TAG"
+          gh auth setup-git
+          git push --atomic origin HEAD:main "refs/tags/$RELEASE_TAG"
+      - name: Publish tested tarball to npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          TARBALL: ${{ steps.pack.outputs.tarball }}
+        run: npm publish "$TARBALL" --ignore-scripts --access public --provenance --tag latest --registry https://registry.npmjs.org/
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.bump.outputs.tag }}
+          PACKAGE_NAME: ${{ steps.bump.outputs.name }}
+          VERSION: ${{ steps.bump.outputs.version }}
+          PREVIOUS_TAG: ${{ steps.tags.outputs.previous }}
+          TARBALL: ${{ steps.pack.outputs.tarball }}
+        run: |
+          notes_from=()
+          if [ -n "$PREVIOUS_TAG" ]; then notes_from=(--notes-start-tag "$PREVIOUS_TAG"); fi
+          gh release create "$RELEASE_TAG" "$TARBALL" --verify-tag --title "$PACKAGE_NAME $VERSION" --generate-notes "${notes_from[@]}"

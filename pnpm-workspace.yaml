@@ -1,0 +1,7 @@
+packages:
+  - packages/*
+allowBuilds:
+  electron: false
+  esbuild: false
+  msgpackr-extract: false
+  tree-sitter-bash: false

@@ -1,0 +1,18 @@
+{
+  "name": "opencode-plugins",
+  "private": true,
+  "type": "module",
+  "description": "OpenCode plugins published under the @fatihdogmus npm scope",
+  "license": "MIT",
+  "packageManager": "pnpm@12.21.0",
+  "engines": {
+    "node": ">=26"
+  },
+  "scripts": {
+    "build": "pnpm -r --if-present build",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "test": "node --test test/*.test.mjs && pnpm -r --if-present test",
+    "check": "node --test test/*.test.mjs && pnpm -r --if-present check",
+    "package": "node scripts/release/pack.mjs"
+  }
+}
