@@ -1,28 +1,57 @@
 {
-  "name": "voice-input",
+  "name": "@fatihdogmus/opencode-voice-input",
   "version": "0.1.0",
-  "private": true,
+  "description": "Voice prompts for OpenCode Desktop and the TUI, transcribed with the OpenAI account selected in OpenCode",
+  "license": "MIT",
   "type": "module",
-  "description": "OpenCode Desktop GUI plugin: a mic pill above the prompt that records your voice, transcribes it with codex-asr or Hex, and types the text into the prompt.",
+  "engines": {
+    "node": ">=26"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fatihdogmus/opencode-plugins.git",
+    "directory": "packages/voice-input"
+  },
+  "homepage": "https://github.com/fatihdogmus/opencode-plugins/tree/main/packages/voice-input#readme",
+  "bugs": {
+    "url": "https://github.com/fatihdogmus/opencode-plugins/issues"
+  },
+  "keywords": [
+    "opencode",
+    "voice",
+    "dictation",
+    "speech-to-text",
+    "transcription",
+    "plugin"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "exports": {
     ".": "./src/index.ts",
     "./rpc": "./src/rpc.ts",
     "./tui": "./src/tui.tsx",
     "./gui-experimental": "./dist/gui-experimental.cjs"
   },
+  "files": [
+    "src",
+    "dist"
+  ],
   "scripts": {
     "build": "vite build",
     "dev": "vite build --watch",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "check": "pnpm typecheck && pnpm build"
   },
   "dependencies": {
     "@opencode/plugin": "2.2.0",
     "effect": "4.0.1"
   },
   "devDependencies": {
-    "@opencode/theme": "^2.2.0",
-    "@opentui/core": "^0.7.0",
-    "@opentui/solid": "^0.7.0",
+    "@opencode/theme": "2.2.0",
+    "@opentui/core": "0.7.0",
+    "@opentui/solid": "0.7.0",
     "@types/node": "^22.0.0",
     "electron": "^39.0.0",
     "solid-js": "^1.9.15",

@@ -1,6 +1,7 @@
-# voice-input
+# @fatihdogmus/opencode-voice-input
 
-OpenCode plugin that adds voice prompts to OpenCode Desktop, transcribed with the OpenAI account selected in OpenCode.
+OpenCode plugin that adds voice prompts to OpenCode Desktop and the TUI, transcribed with the OpenAI account selected in
+OpenCode. The desktop app:
 
 - **Mic button** next to the send button. Click to record (it turns red with a timer), click again to transcribe. The
   text is typed into the prompt at the cursor for you to review and send (nothing is sent automatically). Works in
@@ -12,6 +13,20 @@ OpenCode plugin that adds voice prompts to OpenCode Desktop, transcribed with th
   - Set `"placement": "pill"` in the options to use only the pill.
 - **Shortcut** `⌘⌥M` (changeable in **Settings > Shortcuts**), also `/dictate` and the command palette.
 - **Cancel voice dictation** discards a recording in progress.
+
+## Install
+
+Add the package to your global `~/.config/opencode/opencode.json(c)`. OpenCode Desktop loads GUI parts only from the
+global config, and the TUI loads the TUI part of every plugin its server runs:
+
+```jsonc
+{
+  "$schema": "https://opencode.ai/config.json",
+  "plugins": ["@fatihdogmus/opencode-voice-input"],
+}
+```
+
+Connect an OpenAI account with `/connect` if you haven't. The TUI also needs `ffmpeg` (`brew install ffmpeg`).
 
 ## TUI
 
@@ -62,7 +77,7 @@ opencode api post /api/rpc/voice-input/transcribe --data '{"input":{"audio":"<ba
 {
   "plugins": [
     {
-      "package": "/Users/fatih/opencode-voice-input",
+      "package": "@fatihdogmus/opencode-voice-input",
       "options": {
         "language": "tr", // optional language hint
         "model": "gpt-4o-mini-transcribe", // public-API model for API-key / token-sharing accounts
@@ -87,8 +102,13 @@ opencode api post /api/rpc/voice-input/transcribe --data '{"input":{"audio":"<ba
 
 ## Develop
 
+This package lives in the [opencode-plugins](https://github.com/fatihdogmus/opencode-plugins) monorepo. From the
+repository root:
+
 ```sh
-npm install
-npm run dev        # vite build --watch; each rebuild reloads the GUI in every window
-npm run typecheck
+pnpm install
+pnpm --filter @fatihdogmus/opencode-voice-input check   # typecheck + build the desktop bundle
+pnpm --filter @fatihdogmus/opencode-voice-input dev     # vite build --watch; each rebuild reloads the GUI
 ```
+
+To try a local checkout, point the plugin entry at `packages/voice-input` instead of the package name.

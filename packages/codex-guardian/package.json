@@ -9,11 +9,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fatihdogmus/opencode-codex-guardian.git"
+    "url": "git+https://github.com/fatihdogmus/opencode-plugins.git",
+    "directory": "packages/codex-guardian"
   },
-  "homepage": "https://github.com/fatihdogmus/opencode-codex-guardian#readme",
+  "homepage": "https://github.com/fatihdogmus/opencode-plugins/tree/main/packages/codex-guardian#readme",
   "bugs": {
-    "url": "https://github.com/fatihdogmus/opencode-codex-guardian/issues"
+    "url": "https://github.com/fatihdogmus/opencode-plugins/issues"
   },
   "keywords": [
     "opencode",
@@ -34,11 +35,9 @@
   ],
   "scripts": {
     "build": "tsc --project tsconfig.build.json",
-    "prepare": "npm run build",
-    "test": "node --import tsx --test test/*.test.ts test/*.test.mjs test/transports/*.test.ts",
+    "test": "node --import tsx --test test/*.test.ts test/transports/*.test.ts",
     "typecheck": "tsc --noEmit",
-    "check": "npm run typecheck && npm test && npm run build",
-    "smoke": "node scripts/smoke-package.mjs",
+    "check": "pnpm typecheck && pnpm test && pnpm build",
     "verify:live": "node --import tsx scripts/verify-live.ts",
     "verify:code-mode": "node --import tsx scripts/verify-code-mode.ts"
   },

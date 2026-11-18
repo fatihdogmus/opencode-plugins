@@ -29,11 +29,13 @@ Once published, add `@fatihdogmus/opencode-codex-guardian` to your OpenCode plug
 To use a local checkout instead:
 
 ```sh
-git clone https://github.com/fatihdogmus/opencode-codex-guardian.git
-cd opencode-codex-guardian
-npm ci --ignore-scripts
-npm run build
+git clone https://github.com/fatihdogmus/opencode-plugins.git
+cd opencode-plugins
+pnpm install
+pnpm --filter @fatihdogmus/opencode-codex-guardian build
 ```
+
+Then point the plugin entry at `packages/codex-guardian` in that checkout.
 
 Add this entry to your project `opencode.json(c)` or `.opencode/opencode.json(c)`, preserving existing configuration:
 
@@ -82,7 +84,7 @@ Check its status in OpenCode:
 
 Status does not trigger inference. Native availability and OAuth diagnostics are populated during actual requests, so an initial `NATIVE_UNAVAILABLE` status alone does not establish that your account is unsupported.
 
-After changing plugin source, run `npm run build` again. Configuration changes normally reload automatically; changes to an external local plugin may require `opencode service restart`.
+After changing plugin source, run `pnpm build` in `packages/codex-guardian` again. Configuration changes normally reload automatically; changes to an external local plugin may require `opencode service restart`.
 
 ## How native reviews work
 
@@ -162,36 +164,37 @@ Session caching is off by default and limited to an exact, low-risk bare `git st
 
 ## Development
 
+This package lives in the [opencode-plugins](https://github.com/fatihdogmus/opencode-plugins) monorepo. From the
+repository root:
+
 ```sh
-npm ci --ignore-scripts
-npm run check
-mkdir -p artifacts
-npm pack --ignore-scripts --pack-destination artifacts
-npm run smoke -- artifacts/fatihdogmus-opencode-codex-guardian-0.1.0.tgz
+pnpm install
+pnpm --filter @fatihdogmus/opencode-codex-guardian check
+pnpm package codex-guardian
 ```
 
-`check` runs TypeScript checking, tests, and the build. `smoke` verifies that the packed plugin installs and works without TypeScript tooling or install scripts.
+`check` runs TypeScript checking, tests, and the build. `pnpm package codex-guardian` packs the plugin into
+`artifacts/` and smoke-tests it: the tarball installs and works without TypeScript tooling or install scripts
+(`scripts/smoke.mjs` holds the Guardian-specific checks).
 
 ### Live integration checks
 
+From `packages/codex-guardian`:
+
 ```sh
-npm run verify:live
-AUTO_REVIEW_TEST_TRANSPORT=websocket npm run verify:live
-npm run verify:code-mode
+pnpm verify:live
+AUTO_REVIEW_TEST_TRANSPORT=websocket pnpm verify:live
+pnpm verify:code-mode
 ```
 
 These checks use real inference and temporary sessions; the execution probe permits only a harmless `printf`. They are not part of CI. Do not edit or rebuild the plugin during a live run.
 
 ## Build and release workflows
 
-- **Build** runs on pushes to `main`, pull requests, and manual dispatch. It validates, builds, packs, smoke-tests, and uploads the package as a workflow artifact without accessing ChatGPT credentials.
-- **Release** is a single manual workflow. Run it on `main` and choose `patch`, `minor`, or `major` (default: `patch`). It validates, updates both package files, commits the version as `github-actions[bot]`, pushes the matching tag, publishes the tested package to npm with public access and provenance, and creates a published GitHub release. No drafts or second publish action are needed. Pushes and pull requests never publish to npm.
-
-For maintainers: add a GitHub Actions secret named `NPM_TOKEN`, using an npm granular token with read/write publishing access to the `@fatihdogmus` scope and **Bypass 2FA** enabled. The token must allow creating the package for the first release. The release job uses the `npm` GitHub environment; the secret can be repository-scoped or environment-scoped. Keep it out of configuration files and rotate it before expiration.
-
-Version commits and tags use the workflow's `GITHUB_TOKEN`; branch and tag rules must permit these writes. The workflow never force-pushes or bypasses protection. If a push is rejected, resolve the repository policy before retrying.
-
-Checks must pass before the version commit is pushed. GitHub and npm publication are not atomic: if publication fails after the push, the version commit and tag remain. Recover that version using the saved package artifact rather than starting another version bump; an already published npm version cannot be overwritten.
+Builds and releases run from the monorepo's workflows; see the
+[repository README](https://github.com/fatihdogmus/opencode-plugins#releasing). Releases are tagged
+`codex-guardian-vX.Y.Z`. Versions up to `v0.3.2` were released from the former
+`fatihdogmus/opencode-codex-guardian` repository.
 
 ## License
 

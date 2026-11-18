@@ -1,36 +1,52 @@
 {
-  "name": "opencode-agentic-review",
+  "name": "@fatihdogmus/opencode-agentic-review",
   "version": "0.1.0",
-  "description": "OpenCode plugin that integrates with agentic review MCP server for turn-level session tracking",
+  "description": "OpenCode plugin that records agent turns for the Agentic Review IntelliJ plugin through its MCP server",
+  "license": "MIT",
   "type": "module",
-  "main": "dist/index.js",
+  "engines": {
+    "node": ">=26"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fatihdogmus/opencode-plugins.git",
+    "directory": "packages/agentic-review"
+  },
+  "homepage": "https://github.com/fatihdogmus/opencode-plugins/tree/main/packages/agentic-review#readme",
+  "bugs": {
+    "url": "https://github.com/fatihdogmus/opencode-plugins/issues"
+  },
+  "keywords": [
+    "opencode",
+    "agentic-review",
+    "intellij",
+    "mcp",
+    "plugin"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     }
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
-    "prepublishOnly": "npm run build",
-    "prepack": "npm run build"
+    "typecheck": "tsc --noEmit",
+    "check": "pnpm typecheck && pnpm build"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0"
   },
   "devDependencies": {
     "typescript": "^5.0.0"
-  },
-  "files": [
-    "dist"
-  ],
-  "publishConfig": {
-    "access": "public"
-  },
-  "license": "MIT",
-  "keywords": [
-    "opencode",
-    "agentic-review",
-    "plugin"
-  ]
+  }
 }
