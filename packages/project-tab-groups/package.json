@@ -1,6 +1,6 @@
 {
   "name": "@fatihdogmus/opencode-project-tab-groups",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "OpenCode Desktop plugin that keeps tabs grouped by project, colors and labels each group, and adds a grouped tab switcher",
   "license": "MIT",
   "type": "module",
