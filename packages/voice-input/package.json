@@ -1,6 +1,6 @@
 {
   "name": "@fatihdogmus/opencode-voice-input",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Voice prompts for OpenCode Desktop and the TUI, transcribed with the OpenAI account selected in OpenCode",
   "license": "MIT",
   "type": "module",
