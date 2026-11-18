@@ -1,0 +1,9 @@
+node_modules/
+dist/
+artifacts/
+*.tgz
+.DS_Store
+verification.local.json
+verification.*.local.json
+.env
+.env.*
