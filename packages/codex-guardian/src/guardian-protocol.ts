@@ -5,7 +5,8 @@ export function isCodexURL(url: string): boolean {
     return ["https:", "wss:"].includes(parsed.protocol) && parsed.hostname === "chatgpt.com" && parsed.pathname === "/backend-api/codex/responses"
 }
 
-export function guardianBody(body: Record<string, unknown>, parentID: string, threadID: string): Record<string, unknown> {
+/** A review links to the parent response it reviews; a standalone review (a session that never used Codex) has none. */
+export function guardianBody(body: Record<string, unknown>, parentID: string | undefined, threadID: string): Record<string, unknown> {
     const metadata = { ...(body.client_metadata as Record<string, unknown> ?? {}) }
     delete metadata.guardian_credits_requested
     delete metadata.ws_request_header_x_codex_routing_hint
@@ -20,7 +21,7 @@ export function guardianBody(body: Record<string, unknown>, parentID: string, th
         client_metadata: {
             ...metadata,
             "x-openai-subagent": "guardian",
-            parent_response_id: parentID,
+            ...(parentID ? { parent_response_id: parentID } : {}),
             thread_id: threadID,
             "x-codex-turn-metadata": JSON.stringify({ thread_source: "guardian_review" }),
         },
@@ -41,6 +42,8 @@ export class ParentResponses {
     private sessions = new Map<string, ParentResponse[]>()
     constructor(private now = Date.now, private ttlMs = 300_000) {}
     reset(sessionID: string): void { this.sessions.delete(sessionID) }
+    /** Whether the session has recent Codex responses, so a review must link to one of them. */
+    has(sessionID: string): boolean { return (this.sessions.get(sessionID) ?? []).some((entry) => this.now() - entry.createdAt < this.ttlMs) }
     observe(sessionID: string, event: unknown, currentID?: string): string | undefined {
         if (!event || typeof event !== "object") return currentID
         const frame = event as { type?: string; response?: { id?: string }; item?: { call_id?: string }; response_id?: string }

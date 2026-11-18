@@ -25,6 +25,8 @@ export interface ReviewInput {
     actionHash?: string
     evidence?: Record<string, unknown>
     protocol?: "sse" | "websocket"
+    /** Whether the native review was linked to the session's parent Codex response (false for a standalone review). */
+    parentLinked?: boolean
     reviewTransport?: string
 }
 export interface ReviewerTransport {

@@ -86,6 +86,7 @@ export class PermissionReviewer {
                 input.normalized = redactValue(action)
                 input.actionHash = action.rawHash
                 input.protocol = undefined
+                input.parentLinked = undefined
                 stage = "authorization"
                 input.explicitAuthorizations = this.services.authorizations?.get(input) ?? []
                 controller.signal.throwIfAborted()
@@ -115,7 +116,7 @@ export class PermissionReviewer {
             clearTimeout(timer)
         }
         const decision = this.config.shadow ? "ask" : result.decision
-        const record: ReviewAuditRecord = { timestamp: new Date().toISOString(), sessionHash: hash(event.sessionID), actionType: action?.category ?? "unknown", resourceHash: action?.rawHash ?? hash(JSON.stringify([event.action, event.resources])), transport: input?.reviewTransport ?? (result.assessment ? this.transport.name : "none"), mode: this.config.shadow ? "shadow" : "active", guardianDecision: result.assessment?.outcome, proposedDecision: result.decision, effectiveDecision: decision, riskLevel: result.assessment?.risk_level, authorizationLevel: result.assessment?.user_authorization, latencyMs: Date.now() - started, parentLinked: !!input?.protocol, protocol: input?.protocol, preflight: result.preflight, failure: result.failure, failureDetails: result.failureDetails, cached: result.cached }
+        const record: ReviewAuditRecord = { timestamp: new Date().toISOString(), sessionHash: hash(event.sessionID), actionType: action?.category ?? "unknown", resourceHash: action?.rawHash ?? hash(JSON.stringify([event.action, event.resources])), transport: input?.reviewTransport ?? (result.assessment ? this.transport.name : "none"), mode: this.config.shadow ? "shadow" : "active", guardianDecision: result.assessment?.outcome, proposedDecision: result.decision, effectiveDecision: decision, riskLevel: result.assessment?.risk_level, authorizationLevel: result.assessment?.user_authorization, latencyMs: Date.now() - started, parentLinked: !!input?.parentLinked, protocol: input?.protocol, preflight: result.preflight, failure: result.failure, failureDetails: result.failureDetails, cached: result.cached }
         event.effect = decision
         try { await this.services.audit?.write(record); if (this.services.audit && this.config.audit.enabled) this.diagnostics.auditHealthy = true } catch (error) {
             this.diagnostics.auditHealthy = false

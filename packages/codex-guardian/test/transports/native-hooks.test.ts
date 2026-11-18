@@ -117,6 +117,39 @@ test("API key or missing exact parent never sends native inference", async () =>
     assert.equal(noParent.created.length, 0)
 })
 
+test("a session that never used Codex gets a standalone native review with the connected OpenAI account", async () => {
+    const f = await fixture()
+    const otherProvider = { ...input, sessionID: "ses_claude" }
+    const assessment = await f.transport.review(otherProvider, new AbortController().signal)
+    assert.equal(assessment.outcome, "allow")
+    assert.equal(f.created.length, 1)
+    assert.equal(f.created[0].parentID, "ses_claude")
+    assert.deepEqual(f.created[0].model, { providerID: "openai", id: "gpt-6-luna" })
+    assert.equal(f.requests[0].model, "codex-auto-review")
+    assert.equal("parent_response_id" in f.requests[0].client_metadata, false)
+    assert.equal(f.requests[0].client_metadata["x-openai-subagent"], "guardian")
+    assert.equal(otherProvider.parentLinked, false)
+    assert.equal(f.diagnostics.parentLinked, false)
+    assert.equal(f.diagnostics.nativeState, "NATIVE_WORKS_ACCOUNTING_UNKNOWN")
+    await f.transport.close()
+})
+
+test("a session that uses Codex still links its review to the parent response", async () => {
+    const f = await fixture()
+    const linked = { ...input }
+    await f.transport.review(linked, new AbortController().signal)
+    assert.equal(f.requests[0].client_metadata.parent_response_id, "resp_parent")
+    assert.equal(linked.parentLinked, true)
+    assert.equal(f.diagnostics.parentLinked, true)
+    await f.transport.close()
+})
+
+test("a standalone review still needs ChatGPT OAuth", async () => {
+    const f = await fixture(false)
+    await assert.rejects(() => f.transport.review({ ...input, sessionID: "ses_claude" }, new AbortController().signal), /native_oauth_unavailable/)
+    assert.equal(f.created.length, 0)
+})
+
 test("nested Code Mode calls correlate through their exact source assistant message", async () => {
     const f = await fixture(true, false, [{ type: "assistant", id: "msg_origin", content: [{ type: "tool", id: "call_outer" }] }])
     f.transport.parents.observe(input.sessionID, { type: "response.output_item.added", item: { call_id: "call_outer" } }, "resp_parent")

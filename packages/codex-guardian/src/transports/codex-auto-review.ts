@@ -10,7 +10,8 @@ import { readRequestJSON, withRequestJSON } from "../utils/request-json.ts"
 
 interface ReviewSession {
     sessionID: string
-    parentID: string
+    /** Undefined for a standalone review: the session never used Codex, so there is no parent response to link. */
+    parentID?: string
     sent: boolean
     protocol?: "sse" | "websocket"
     cleanup?: Promise<void>
@@ -72,7 +73,7 @@ export class CodexAutoReviewTransport implements ReviewerTransport {
                 event.request = withRequestJSON(event.request, body, headers)
                 entry.sent = true
                 entry.protocol = "sse"
-                this.recordProtocol()
+                this.recordProtocol(entry)
                 return
             }
             if (event.kind !== "primary" || !isCodexURL(event.request.url) || !await this.oauthAvailable()) return
@@ -115,7 +116,7 @@ export class CodexAutoReviewTransport implements ReviewerTransport {
                 event.frame = JSON.stringify(guardianBody(body, entry.parentID, entry.sessionID))
                 entry.sent = true
                 entry.protocol = "websocket"
-                this.recordProtocol()
+                this.recordProtocol(entry)
             } else {
                 event.frame = JSON.stringify(primaryBody(body))
                 this.diagnostics.primaryMetadata = true
@@ -129,8 +130,8 @@ export class CodexAutoReviewTransport implements ReviewerTransport {
         this.hooksReady = true
     }
 
-    private recordProtocol(): void {
-        this.diagnostics.parentLinked = true
+    private recordProtocol(entry: ReviewSession): void {
+        this.diagnostics.parentLinked = entry.parentID !== undefined
         this.diagnostics.guardianHeader = true
         this.diagnostics.guardianSubagent = true
     }
@@ -150,7 +151,9 @@ export class CodexAutoReviewTransport implements ReviewerTransport {
         if (!this.hooksReady) throw new ReviewError("native_hooks_unavailable")
         if (this.closed || !await this.oauthAvailable()) throw new ReviewError("native_oauth_unavailable")
         const parentID = await this.parentResponse(input)
-        if (!parentID) throw new ReviewError("parent_response_missing")
+        // A session that uses Codex must link its review to the exact parent response; never guess one. A session on
+        // another provider has no Codex responses at all, so its review runs standalone with the connected OpenAI account.
+        if (!parentID && this.parents.has(input.sessionID)) throw new ReviewError("parent_response_missing")
         let entry: ReviewSession | undefined
         const retire = () => entry ? this.retire(entry) : Promise.resolve()
         const abort = () => { void retire().catch(() => {}) }
@@ -183,6 +186,7 @@ export class CodexAutoReviewTransport implements ReviewerTransport {
             this.diagnostics.nativeState = "NATIVE_WORKS_ACCOUNTING_UNKNOWN"
             this.diagnostics.protocol = entry.protocol
             input.protocol = entry.protocol
+            input.parentLinked = entry.parentID !== undefined
             return assessment
         } catch (error) {
             this.diagnostics.nativeState = "NATIVE_UNAVAILABLE"

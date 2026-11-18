@@ -18,7 +18,7 @@ This includes out-of-project `external_directory` requests. Approval is scoped t
 
 - Node.js 26 or newer.
 - OpenCode V2; tested with `2.0.24` and `2.0.32`. Plugin API dependency pinned to `2.0.24`.
-- For native reviews: the built-in `openai` provider connected through ChatGPT OAuth, with the main session using its Codex endpoint.
+- For native reviews: the built-in `openai` provider connected through ChatGPT OAuth (the account selected in `/connect`). The main session can use any model; see [How native reviews work](#how-native-reviews-work).
 
 OpenAI API-key connections and custom provider aliases are not supported by the native transport. Backend availability of `codex-auto-review` is not guaranteed.
 
@@ -93,7 +93,8 @@ so don't loosen any security setting the user didn't explicitly ask to change.
 
 1. **Check the OpenAI connection.** Native reviews need the built-in OpenAI provider signed in with ChatGPT
    (`opencode auth list` shows an `OpenAI` row). API-key connections are not supported. If it's missing, ask the user to
-   run `/connect` in OpenCode and choose a ChatGPT sign-in; don't start an OAuth flow yourself.
+   run `/connect` in OpenCode and choose a ChatGPT sign-in; don't start an OAuth flow yourself. The model the user codes
+   with doesn't matter: sessions on other providers get standalone reviews through this account.
 2. **Install it globally** with OpenCode's plugin command. It installs the package and adds it to the user's global
    config, which is what persistent enforcement needs. Don't edit OpenCode's database or run `npm install` yourself.
 
@@ -117,9 +118,9 @@ To remove it: `opencode plugin remove @fatihdogmus/opencode-codex-guardian`.
 
 ## How native reviews work
 
-1. Correlate the proposed action with the main OpenAI/Codex response.
+1. Correlate the proposed action with the main session's OpenAI/Codex response, when the session uses Codex.
 2. Check for catastrophic actions and protected resources, then gather user instructions and bounded read-only evidence with best-effort secret redaction.
-3. Review the action through `codex-auto-review` in a **fresh, tool-free child session**, using OpenCode's ChatGPT OAuth connection and parent-response linkage.
+3. Review the action through `codex-auto-review` in a **fresh, tool-free child session**, using OpenCode's ChatGPT OAuth connection, linked to the parent response when there is one.
 4. Validate the assessment, delete the child session, and apply local risk rules. Failures never silently approve an action.
 5. Write hashed decision metadata to the audit log. Successful approvals are silent; deny/ask explanations are sanitized.
 
@@ -127,7 +128,12 @@ Native HTTP hooks accept plain JSON and `zstd`, `gzip`, `deflate`, or Brotli-com
 
 The reviewer reuses OpenCode's active ChatGPT OAuth connection. It does not require a separate API key and does not use your selected chat model for the review itself. Your selected model continues doing the coding.
 
-Without OAuth or a matching Codex parent response, native review fails. For example, a main session using Anthropic normally cannot supply the required linkage. With the configuration above, failure leaves the request for human approval rather than calling another model.
+The main session's model doesn't matter:
+
+- **A session on OpenAI/Codex** links each review to the exact Codex response that proposed the action. If that response can't be identified exactly (for example, one source message spans several responses), the review fails rather than guessing a link.
+- **A session on another provider** (for example, Anthropic) has no Codex responses to link, so the review runs **standalone**: the same `codex-auto-review` model and policy through the connected OpenAI account, without `parent_response_id`. Status and the audit log report it with `parentLinked: false`. Whether standalone reviews are accounted differently from linked ones is unverified, like all accounting.
+
+Without ChatGPT OAuth, native review fails. With the configuration above, failure leaves the request for human approval rather than calling another model.
 
 ## Safety and limitations
 

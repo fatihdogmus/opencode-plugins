@@ -17,6 +17,25 @@ test("Codex public Guardian protocol is reproduced without primary credits in ch
     })
     assert.equal((primaryBody({}).client_metadata as Record<string, unknown>).guardian_credits_requested, "true")
 })
+test("a standalone Guardian request omits only the parent response link", () => {
+    const linked = guardianBody({ model: "normal" }, "resp_parent", "ses_review")
+    const standalone = guardianBody({ model: "normal" }, undefined, "ses_review")
+    const { parent_response_id, ...rest } = linked.client_metadata as Record<string, unknown>
+    assert.equal(parent_response_id, "resp_parent")
+    assert.deepEqual(standalone, { ...linked, client_metadata: rest })
+})
+
+test("only sessions with recent Codex responses require a parent link", () => {
+    let now = 0
+    const parents = new ParentResponses(() => now, 100)
+    assert.equal(parents.has("ses_codex"), false)
+    parents.observe("ses_codex", { type: "response.created", response: { id: "resp_1" } })
+    assert.equal(parents.has("ses_codex"), true)
+    assert.equal(parents.has("ses_other"), false)
+    now = 100
+    assert.equal(parents.has("ses_codex"), false)
+})
+
 test("native auth cannot be forwarded to a different origin or endpoint", () => {
     assert.equal(isCodexURL("https://chatgpt.com/backend-api/codex/responses"), true)
     for (const url of ["https://chatgpt.com.evil.test/backend-api/codex/responses", "http://chatgpt.com/backend-api/codex/responses", "https://api.openai.com/v1/responses"]) assert.equal(isCodexURL(url), false)

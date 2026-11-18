@@ -17,6 +17,7 @@ export class SelectingTransport implements ReviewerTransport {
         this.name = this.generic.name
         input.reviewTransport = this.generic.name
         input.protocol = undefined
+        input.parentLinked = undefined
         const result = await this.generic.review(input, signal)
         this.diagnostics.nativeState = "FALLBACK_MODEL"
         return result
