@@ -1,0 +1,56 @@
+{
+  "name": "@fatihdogmus/opencode-codex-guardian",
+  "version": "0.3.2",
+  "description": "Codex Guardian permission reviews for OpenCode V2",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=26"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fatihdogmus/opencode-codex-guardian.git"
+  },
+  "homepage": "https://github.com/fatihdogmus/opencode-codex-guardian#readme",
+  "bugs": {
+    "url": "https://github.com/fatihdogmus/opencode-codex-guardian/issues"
+  },
+  "keywords": [
+    "opencode",
+    "codex",
+    "guardian",
+    "permissions",
+    "plugin"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc --project tsconfig.build.json",
+    "prepare": "npm run build",
+    "test": "node --import tsx --test test/*.test.ts test/*.test.mjs test/transports/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run typecheck && npm test && npm run build",
+    "smoke": "node scripts/smoke-package.mjs",
+    "verify:live": "node --import tsx scripts/verify-live.ts",
+    "verify:code-mode": "node --import tsx scripts/verify-code-mode.ts"
+  },
+  "dependencies": {
+    "@opencode/client": "2.0.24",
+    "@opencode/plugin": "2.0.24",
+    "tree-sitter-bash": "0.25.1",
+    "web-tree-sitter": "0.27.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.0.0",
+    "tsx": "^4.23.15",
+    "typescript": "^6.0.2"
+  }
+}
