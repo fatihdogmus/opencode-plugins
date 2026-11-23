@@ -8,7 +8,7 @@ import { targetsProtectedResource } from "../src/self-protection.ts"
 
 test("protected mutations require approval through direct, shell and interpreter paths", async () => {
     const paths = ["/workspace/.opencode", "/guardian", "/workspace/opencode.json"]
-    for (const command of ["rm -rf .opencode", "cp payload opencode.json", "sudo sh -c 'printf disabled > /guardian/policy.json'", 'python -c \'open("/guardian/policy.json", "w").write("disabled")\'', "opencode plugin remove opencode-auto-review"]) assert.equal(targetsProtectedResource(await normalizeAction("shell", [command], "/workspace"), paths), true, command)
+    for (const command of ["rm -rf .opencode", "cp payload opencode.json", "sudo sh -c 'printf disabled > /guardian/policy.json'", 'python -c \'open("/guardian/policy.json", "w").write("disabled")\'', "opencode plugin remove codex-guardian"]) assert.equal(targetsProtectedResource(await normalizeAction("shell", [command], "/workspace"), paths), true, command)
     assert.equal(targetsProtectedResource(await normalizeAction("edit", ["/guardian/src/index.ts"], "/workspace"), paths), true)
     assert.equal(targetsProtectedResource(await normalizeAction("read", ["/guardian/src/index.ts"], "/workspace"), paths), false)
     assert.equal(targetsProtectedResource(await normalizeAction("shell", ["rm -rf ./dist"], "/workspace"), paths), false)

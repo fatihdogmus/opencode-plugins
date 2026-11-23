@@ -18,7 +18,7 @@ import { SelectingTransport } from "./transports/reviewer.ts"
 import { AutoReviewRPC } from "./rpc.ts"
 
 const plugin: Plugin = {
-    id: "opencode-auto-review",
+    id: "codex-guardian",
     async setup(ctx) {
         const loaded = await loadSecurityConfig(ctx.options, ctx.location.directory).then((value) => ({ ...value, invalid: false })).catch(() => ({ config: parseConfig({ enabled: true, failureMode: "deny" }), provenance: "unknown" as const, path: trustedConfigPath(), ignoredWeakening: true, invalid: true }))
         const config = loaded.config

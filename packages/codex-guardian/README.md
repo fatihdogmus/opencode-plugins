@@ -108,7 +108,7 @@ so don't loosen any security setting the user didn't explicitly ask to change.
 3. **Leave the trusted policy alone** unless the user asks to change it. `~/.config/opencode/codex-guardian.json` is the
    only place that can disable reviews or switch to shadow mode. When the user does ask, write exactly what they asked
    for, then `chmod 600` the file; it must be a regular file the user owns, not a symlink.
-4. **Verify** that `opencode plugin list` has a row with the ID `opencode-auto-review`. Config changes reload on their
+4. **Verify** that `opencode plugin list` has a row with the ID `codex-guardian`. Config changes reload on their
    own; don't restart OpenCode or its service.
 5. **Tell the user** that `ask`-level permission requests are now reviewed by Codex Guardian, which allows, denies, or
    leaves them for their approval, and that `/auto-review status` in OpenCode shows its state. Free usage is
