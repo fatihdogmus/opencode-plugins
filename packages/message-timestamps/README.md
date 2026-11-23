@@ -3,9 +3,9 @@
 OpenCode TUI plugin that adds each reply's completion time to the assistant footer, after the duration and tokens per
 second:
 
-`Build · Claude Opus 5.5 · 12.3s · 35.7 tok/s · 04 Nov 2026, 12:18:03 GMT+3`
+`Build · Claude Opus 5.5 · 12.3s · 35.7 tok/s · 04 Nov 2026, 12:18:03`
 
-- Uses the computer's time zone and labels it (`GMT+3`, `BST`, `UTC`, …), including daylight saving changes.
+- Shows the time in the computer's time zone, including daylight saving changes, without a zone label.
 - Uses the saved completion time, falling back to the creation time for retried or interrupted replies, so it also works
   for older replies.
 - Doesn't change prompts, saved messages, the database or OpenCode itself, and keeps the footer's own text, colors and

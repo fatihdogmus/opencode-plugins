@@ -65,14 +65,14 @@ function fixture() {
   return { message, footer, anchor, row, scroll, root, adapter }
 }
 
-test("formats in the given time zone and labels it, across daylight saving changes", () => {
-  assert.equal(formatTimestamp(Date.parse("2026-11-04T10:14:44Z"), istanbul), "04 Nov 2026, 13:14:44 GMT+3")
-  assert.equal(formatTimestamp(Date.parse("2026-12-31T21:00:00Z"), istanbul), "01 Jan 2027, 00:00:00 GMT+3")
+test("formats in the given time zone without a zone label, across daylight saving changes", () => {
+  assert.equal(formatTimestamp(Date.parse("2026-11-04T10:14:44Z"), istanbul), "04 Nov 2026, 13:14:44")
+  assert.equal(formatTimestamp(Date.parse("2026-12-31T21:00:00Z"), istanbul), "01 Jan 2027, 00:00:00")
   const london = createFormatter("Europe/London")
-  assert.equal(formatTimestamp(Date.parse("2026-11-04T10:14:44Z"), london), "04 Nov 2026, 10:14:44 GMT")
-  assert.equal(formatTimestamp(Date.parse("2026-07-04T10:14:44Z"), london), "04 Jul 2026, 11:14:44 BST")
+  assert.equal(formatTimestamp(Date.parse("2026-11-04T10:14:44Z"), london), "04 Nov 2026, 10:14:44")
+  assert.equal(formatTimestamp(Date.parse("2026-07-04T10:14:44Z"), london), "04 Jul 2026, 11:14:44")
   const newYork = createFormatter("America/New_York")
-  assert.equal(formatTimestamp(Date.parse("2026-11-04T10:14:44Z"), newYork), "04 Nov 2026, 05:14:44 GMT-5")
+  assert.equal(formatTimestamp(Date.parse("2026-11-04T10:14:44Z"), newYork), "04 Nov 2026, 05:14:44")
 })
 
 test("uses the computer's time zone by default", () => {
@@ -92,7 +92,7 @@ test("appends once without replacing agent/model/duration/TPS spans", () => {
   for (let i = 0; i < 5; i++) f.adapter.update(f.root, [f.message])
   assert.equal(f.footer.children.length, original.length + 1)
   assert.deepEqual(f.footer.children.slice(0, -1), original)
-  assert.equal(plainText(f.footer), "Build · Claude Opus 5.5 · 14m 44s · 27.4 tok/s · 04 Nov 2026, 13:14:44 GMT+3")
+  assert.equal(plainText(f.footer), "Build · Claude Opus 5.5 · 14m 44s · 27.4 tok/s · 04 Nov 2026, 13:14:44")
   f.adapter.dispose()
   assert.deepEqual(f.footer.children, original)
 })
@@ -102,17 +102,17 @@ test("supports session-part anchors and TPS hidden", () => {
   f.anchor.id = "session-part:msg_a:text:0"
   f.footer.remove(f.footer.children.at(-1))
   f.adapter.update(f.root, [f.message])
-  assert.ok(plainText(f.footer).endsWith("13:14:44 GMT+3"))
+  assert.ok(plainText(f.footer).endsWith("2026, 13:14:44"))
 })
 
 test("creation fallback updates to saved completion time", () => {
   const f = fixture()
   delete f.message.time!.completed
   f.adapter.update(f.root, [f.message])
-  assert.ok(plainText(f.footer).endsWith("13:00:00 GMT+3"))
+  assert.ok(plainText(f.footer).endsWith("2026, 13:00:00"))
   f.message.time!.completed = Date.parse("2026-11-04T10:14:44Z")
   f.adapter.update(f.root, [f.message])
-  assert.ok(plainText(f.footer).endsWith("13:14:44 GMT+3"))
+  assert.ok(plainText(f.footer).endsWith("2026, 13:14:44"))
   assert.equal(f.footer.children.length, 5)
 })
 

@@ -49,13 +49,12 @@ export function createFormatter(timeZone?: string) {
     minute: "2-digit",
     second: "2-digit",
     hourCycle: "h23",
-    timeZoneName: "short",
   })
 }
 
 const localFormatter = createFormatter()
 
-/** `04 Nov 2026, 13:14:44 GMT+3`, or undefined for anything that isn't a valid time. */
+/** `04 Nov 2026, 13:14:44`, or undefined for anything that isn't a valid time. */
 export function formatTimestamp(time: unknown, formatter: Intl.DateTimeFormat = localFormatter) {
   if (typeof time !== "number" || !Number.isFinite(time)) return undefined
   const date = new Date(time)
