@@ -182,7 +182,7 @@ importers:
         version: 1.32.2(zod@4.1.8)
       '@opencode/plugin':
         specifier: 2.3.2
-        version: 2.3.2(@opentelemetry/semantic-conventions@1.45.0)(electron@39.8.10)(redis@6.3.1(@opentelemetry/api@1.9.0))(solid-js@1.9.19)(vite-plugin-solid@2.11.16(solid-js@1.9.19)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(tsx@4.23.15)))(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(tsx@4.23.15))
+        version: 2.3.2(@opencode/theme@2.3.2(typescript@5.9.3)(web-tree-sitter@0.25.10))(@opentelemetry/semantic-conventions@1.45.0)(@opentui/core@0.9.4(typescript@5.9.3)(web-tree-sitter@0.25.10))(electron@39.8.10)(redis@6.3.1(@opentelemetry/api@1.9.0))(solid-js@1.9.19)(vite-plugin-solid@2.11.16(solid-js@1.9.19)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(tsx@4.23.15)))(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(tsx@4.23.15))
     devDependencies:
       '@types/node':
         specifier: ^26.6.6
@@ -218,6 +218,28 @@ importers:
       typescript:
         specifier: ^6.0.2
         version: 6.0.3
+
+  packages/message-timestamps:
+    dependencies:
+      '@opencode/plugin':
+        specifier: 2.3.2
+        version: 2.3.2(@opencode/theme@2.3.2(typescript@7.0.2)(web-tree-sitter@0.25.10))(@opentelemetry/semantic-conventions@1.45.0)(@opentui/core@0.9.4(typescript@7.0.2)(web-tree-sitter@0.25.10))(electron@39.8.10)(redis@6.3.1(@opentelemetry/api@1.9.0))(solid-js@1.9.19)(vite-plugin-solid@2.11.16(solid-js@1.9.19)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(tsx@4.23.15)))(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(tsx@4.23.15))
+    devDependencies:
+      '@opencode/theme':
+        specifier: 2.3.2
+        version: 2.3.2(typescript@7.0.2)(web-tree-sitter@0.25.10)
+      '@opentui/core':
+        specifier: 0.9.4
+        version: 0.9.4(typescript@7.0.2)(web-tree-sitter@0.25.10)
+      '@types/node':
+        specifier: ^26.0.0
+        version: 26.6.6
+      tsx:
+        specifier: ^4.23.15
+        version: 4.23.15
+      typescript:
+        specifier: ^7.0.2
+        version: 7.0.2
 
   packages/project-tab-groups:
     dependencies:
@@ -1099,6 +1121,9 @@ packages:
   '@opencode/theme@2.2.0':
     resolution: {integrity: sha512-Qnc6N6vlfjgzpUBNi+R8e5USCXGqvTWV6Vr5chz8wQO+godstrUgH7jl6WJKvFTiJ4wQeDMXudvySSOxi9Q/4w==}
 
+  '@opencode/theme@2.3.2':
+    resolution: {integrity: sha512-07OePMc3Fiv8MR/OCgMdt033OZkHExwQCDEM8XSej3sYT6OO7IR7G2MkQEW2DRRk7UscKUjwwl8s+1saf2zZag==}
+
   '@opencode/util@2.0.24':
     resolution: {integrity: sha512-7iVG2MdxR3NNliTjNGqoXp8cXRb+jBW+Vm9KWWK/lOh5xdOM0FDOhXLgqFDnBD0tMCDwXwn8GMUzrC4nT2CdNA==}
 
@@ -1187,8 +1212,28 @@ packages:
     cpu: [arm64]
     os: [darwin]
 
+  '@opentui/core-darwin-arm64@0.8.4':
+    resolution: {integrity: sha512-kAWCmLsGuxQANeq4AjjX0Yodca2VIofQGUfIH9Edg9BKajYpf941heZfMJkkkJUXawYTNFTR2lBYsdneUUJBrg==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@opentui/core-darwin-arm64@0.9.4':
+    resolution: {integrity: sha512-hwQBFr+YSjQ7jxfsLj7AVa1het5veMLfRPFmH1z6eLNlvukdfFA7R4Jl1lHFm3ip5RZRGTanFQDaShOw2l0DMw==}
+    cpu: [arm64]
+    os: [darwin]
+
   '@opentui/core-darwin-x64@0.7.0':
     resolution: {integrity: sha512-hZQ4OfAua5CtUv3hpZ81zhNTTLULbg0leQ/3eupjefityGP6163eS56IzymTWuiM/mVD/7Ad5bicH0I2JXhr1g==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@opentui/core-darwin-x64@0.8.4':
+    resolution: {integrity: sha512-0S62YHtIh1Q9tTun7065njEtYUUtf1zXwllDKXr63R1cVgq+8eRdVQ2PsAGNOqB5OYYno+M8o2tuK/Es2uvmBA==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@opentui/core-darwin-x64@0.9.4':
+    resolution: {integrity: sha512-aBZAjQovTrP/EIsWJb/WXHFzz5Oh+MdOpojNCb567eBVtIRY3W6e/60qwZVgovu7wZcdYbtKYPkuS7+Hh+OGdA==}
     cpu: [x64]
     os: [darwin]
 
@@ -1198,8 +1243,30 @@ packages:
     os: [linux]
     libc: [musl]
 
+  '@opentui/core-linux-arm64-musl@0.8.4':
+    resolution: {integrity: sha512-IG887NHjPJEw5D1dvNl9jPbcwNFREFKj2fnqEjdrwCnDRywtjNL7k7GgTo24NNlyMAZAq0OkoM0M0Sn6ex/Adg==}
+    cpu: [arm64]
+    os: [linux]
+    libc: [musl]
+
+  '@opentui/core-linux-arm64-musl@0.9.4':
+    resolution: {integrity: sha512-qUOnjER4CY0I4GJc9X0KyNYaxtgUSf/yy+3NwdvOZODbvLMeGyBDQ3209K2iuyfc8c1WU93J5cIXqJj+k18hIw==}
+    cpu: [arm64]
+    os: [linux]
+    libc: [musl]
+
   '@opentui/core-linux-arm64@0.7.0':
     resolution: {integrity: sha512-/u+Kalzkz8NntUW5zjypgt9fnzeKohLG9YMEas7n98KvyaYScrtO4Mdj5iv/STNB3IfocJOChzYAbO6C8TmlPQ==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@opentui/core-linux-arm64@0.8.4':
+    resolution: {integrity: sha512-VGnBN3ItBwZog109wtPIou8pn93TseZwA5OZ05X2PYIYPw+IC6mVeO2Dn0qwwozLBDxeyH3ydbHMFlwzS4/fLg==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@opentui/core-linux-arm64@0.9.4':
+    resolution: {integrity: sha512-/igVllJGl12d9TXI4I8AZ4NFA1wGLwm8If6r+wtnd2Yq3LrZsuEf6MZ836XTnQJHJKNR2QY5TwkLSQg/Qslx5w==}
     cpu: [arm64]
     os: [linux]
 
@@ -1209,8 +1276,30 @@ packages:
     os: [linux]
     libc: [musl]
 
+  '@opentui/core-linux-x64-musl@0.8.4':
+    resolution: {integrity: sha512-FAiH7wMt/ZbpP2w6TL62deNExTg5w6mujKUBSK89+gJV8FN4jk/K2xz9f522aYhC6SdbpyIKwS0oGIJldYLkcg==}
+    cpu: [x64]
+    os: [linux]
+    libc: [musl]
+
+  '@opentui/core-linux-x64-musl@0.9.4':
+    resolution: {integrity: sha512-0xjtikRbFJlV33zvtiMhvL90ZlugFV0YWrx07GFoRvUdADxVtB9YSQFjfkdsavZLbc3snd86Qsus6BBAcHg0MA==}
+    cpu: [x64]
+    os: [linux]
+    libc: [musl]
+
   '@opentui/core-linux-x64@0.7.0':
     resolution: {integrity: sha512-OD2tGl1r27zcgCsuc+TYU5e+qhrbsRSI0YUBEb0ebQo8P6Ps2FL9LFenH9om4fddCh06G9Zd45ekJMhlDrGD3Q==}
+    cpu: [x64]
+    os: [linux]
+
+  '@opentui/core-linux-x64@0.8.4':
+    resolution: {integrity: sha512-N/uxyaPpWkCZlDXz3fgHMfMuj1L3IVZ/xZ4JifUc4NW9bwa/CYWFJ5J5jBoy2QsAIqoqo8/OD3iFpXR4o12mNQ==}
+    cpu: [x64]
+    os: [linux]
+
+  '@opentui/core-linux-x64@0.9.4':
+    resolution: {integrity: sha512-6jKg9AkJ1g3d4n1I8Ug09PouzWBD+FZWhmMEduiULiA0lbYjZL22Y07nfMOSzx/Ehqt/GcY5q8m0V/rK/QWlcQ==}
     cpu: [x64]
     os: [linux]
 
@@ -1219,13 +1308,45 @@ packages:
     cpu: [arm64]
     os: [win32]
 
+  '@opentui/core-win32-arm64@0.8.4':
+    resolution: {integrity: sha512-vjDuuIcmanoipIKdME8A7ZuBgIw2E1fv4pRJp6M19+Zfx0HIUmtA8bv+mT/kaz8Cpad9EUzJkNI5fV8P2p/iKg==}
+    cpu: [arm64]
+    os: [win32]
+
+  '@opentui/core-win32-arm64@0.9.4':
+    resolution: {integrity: sha512-rLXIEoQBh9tUzTwf79TSRbpC94wtIyUOwRp2CykcgB8m57wM73I9fGKsWEip4scyUkybOH97XvGD/mWZF9ftzA==}
+    cpu: [arm64]
+    os: [win32]
+
   '@opentui/core-win32-x64@0.7.0':
     resolution: {integrity: sha512-OfNAX7fNFHhOiiojUkIjhVOZf+IDjpbpT5G7HrxGqhlZ+n4jITrrJzACHctteWbMUYcibieJzIIoKuLdmD5I+w==}
     cpu: [x64]
     os: [win32]
 
+  '@opentui/core-win32-x64@0.8.4':
+    resolution: {integrity: sha512-I4XnzUmyKCb8cRD1UntQXRkIEl0fxfQnzS3bTODWbENAOdRsK2c7Ff07DG2qTAqNijyTuk63C+uLmAT9ObOQ1Q==}
+    cpu: [x64]
+    os: [win32]
+
+  '@opentui/core-win32-x64@0.9.4':
+    resolution: {integrity: sha512-pZVlwwJZ3VqOjN/fmVFwaLA1H8JNOvuW27DoXzOIBDxoMi+l1UsL6rHGsLRDSPssQ3pjSn/jFCWo+xD/EtcbAA==}
+    cpu: [x64]
+    os: [win32]
+
   '@opentui/core@0.7.0':
     resolution: {integrity: sha512-2iWBw9oo+ZJfPbOWeTLXfDV63yTDRfclxltI4IgTa6n7OB90x5xplLMH3y9DXhnWibzTui00GbK3ZCwKfUU1SQ==}
+    engines: {bun: '>=1.3.14', node: '>=26.4.0'}
+    peerDependencies:
+      web-tree-sitter: 0.25.10
+
+  '@opentui/core@0.8.4':
+    resolution: {integrity: sha512-s2z2FFEWxsQ6IPVEiAjlHHY5yssnCI+dIltL54+ZhVz1EWxylaB0HER+ypPL2goot0DKwKqrM57rnomh19/2rQ==}
+    engines: {bun: '>=1.3.14', node: '>=26.4.0'}
+    peerDependencies:
+      web-tree-sitter: 0.25.10
+
+  '@opentui/core@0.9.4':
+    resolution: {integrity: sha512-jV8ZAkI87juANCq6XD6UDMp3/WzNpfxloejmdwfCA9UaxBghVkqzoS8RyEYnXDUaS9u+DTCYy1RQMXc1UVibjQ==}
     engines: {bun: '>=1.3.14', node: '>=26.4.0'}
     peerDependencies:
       web-tree-sitter: 0.25.10
@@ -4215,7 +4336,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@opencode/plugin@2.3.2(@opentelemetry/semantic-conventions@1.45.0)(electron@39.8.10)(redis@6.3.1(@opentelemetry/api@1.9.0))(solid-js@1.9.19)(vite-plugin-solid@2.11.16(solid-js@1.9.19)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(tsx@4.23.15)))(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(tsx@4.23.15))':
+  '@opencode/plugin@2.3.2(@opencode/theme@2.3.2(typescript@5.9.3)(web-tree-sitter@0.25.10))(@opentelemetry/semantic-conventions@1.45.0)(@opentui/core@0.9.4(typescript@5.9.3)(web-tree-sitter@0.25.10))(electron@39.8.10)(redis@6.3.1(@opentelemetry/api@1.9.0))(solid-js@1.9.19)(vite-plugin-solid@2.11.16(solid-js@1.9.19)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(tsx@4.23.15)))(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(tsx@4.23.15))':
     dependencies:
       '@ai-sdk/provider': 3.0.8
       '@opencode/ai': 2.3.2
@@ -4225,6 +4346,32 @@ snapshots:
       '@opencode/util': 2.3.2(@opentelemetry/semantic-conventions@1.45.0)(redis@6.3.1(@opentelemetry/api@1.9.0))
       effect: 4.1.0
     optionalDependencies:
+      '@opencode/theme': 2.3.2(typescript@5.9.3)(web-tree-sitter@0.25.10)
+      '@opentui/core': 0.9.4(typescript@5.9.3)(web-tree-sitter@0.25.10)
+      electron: 39.8.10
+      solid-js: 1.9.19
+      vite: 8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(tsx@4.23.15)
+      vite-plugin-solid: 2.11.16(solid-js@1.9.19)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(tsx@4.23.15))
+    transitivePeerDependencies:
+      - '@opentelemetry/sdk-trace-web'
+      - '@opentelemetry/semantic-conventions'
+      - bufferutil
+      - redis
+      - supports-color
+      - utf-8-validate
+
+  '@opencode/plugin@2.3.2(@opencode/theme@2.3.2(typescript@7.0.2)(web-tree-sitter@0.25.10))(@opentelemetry/semantic-conventions@1.45.0)(@opentui/core@0.9.4(typescript@7.0.2)(web-tree-sitter@0.25.10))(electron@39.8.10)(redis@6.3.1(@opentelemetry/api@1.9.0))(solid-js@1.9.19)(vite-plugin-solid@2.11.16(solid-js@1.9.19)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(tsx@4.23.15)))(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(tsx@4.23.15))':
+    dependencies:
+      '@ai-sdk/provider': 3.0.8
+      '@opencode/ai': 2.3.2
+      '@opencode/client': 2.3.2(effect@4.1.0)(solid-js@1.9.19)
+      '@opencode/protocol': 2.3.2
+      '@opencode/schema': 2.3.2
+      '@opencode/util': 2.3.2(@opentelemetry/semantic-conventions@1.45.0)(redis@6.3.1(@opentelemetry/api@1.9.0))
+      effect: 4.1.0
+    optionalDependencies:
+      '@opencode/theme': 2.3.2(typescript@7.0.2)(web-tree-sitter@0.25.10)
+      '@opentui/core': 0.9.4(typescript@7.0.2)(web-tree-sitter@0.25.10)
       electron: 39.8.10
       solid-js: 1.9.19
       vite: 8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(tsx@4.23.15)
@@ -4271,6 +4418,23 @@ snapshots:
     dependencies:
       '@opentui/core': 0.7.0(typescript@7.0.2)(web-tree-sitter@0.25.10)
       effect: 4.0.1
+    transitivePeerDependencies:
+      - typescript
+      - web-tree-sitter
+
+  '@opencode/theme@2.3.2(typescript@5.9.3)(web-tree-sitter@0.25.10)':
+    dependencies:
+      '@opentui/core': 0.8.4(typescript@5.9.3)(web-tree-sitter@0.25.10)
+      effect: 4.1.0
+    transitivePeerDependencies:
+      - typescript
+      - web-tree-sitter
+    optional: true
+
+  '@opencode/theme@2.3.2(typescript@7.0.2)(web-tree-sitter@0.25.10)':
+    dependencies:
+      '@opentui/core': 0.8.4(typescript@7.0.2)(web-tree-sitter@0.25.10)
+      effect: 4.1.0
     transitivePeerDependencies:
       - typescript
       - web-tree-sitter
@@ -4450,25 +4614,73 @@ snapshots:
   '@opentui/core-darwin-arm64@0.7.0':
     optional: true
 
+  '@opentui/core-darwin-arm64@0.8.4':
+    optional: true
+
+  '@opentui/core-darwin-arm64@0.9.4':
+    optional: true
+
   '@opentui/core-darwin-x64@0.7.0':
+    optional: true
+
+  '@opentui/core-darwin-x64@0.8.4':
+    optional: true
+
+  '@opentui/core-darwin-x64@0.9.4':
     optional: true
 
   '@opentui/core-linux-arm64-musl@0.7.0':
     optional: true
 
+  '@opentui/core-linux-arm64-musl@0.8.4':
+    optional: true
+
+  '@opentui/core-linux-arm64-musl@0.9.4':
+    optional: true
+
   '@opentui/core-linux-arm64@0.7.0':
+    optional: true
+
+  '@opentui/core-linux-arm64@0.8.4':
+    optional: true
+
+  '@opentui/core-linux-arm64@0.9.4':
     optional: true
 
   '@opentui/core-linux-x64-musl@0.7.0':
     optional: true
 
+  '@opentui/core-linux-x64-musl@0.8.4':
+    optional: true
+
+  '@opentui/core-linux-x64-musl@0.9.4':
+    optional: true
+
   '@opentui/core-linux-x64@0.7.0':
+    optional: true
+
+  '@opentui/core-linux-x64@0.8.4':
+    optional: true
+
+  '@opentui/core-linux-x64@0.9.4':
     optional: true
 
   '@opentui/core-win32-arm64@0.7.0':
     optional: true
 
+  '@opentui/core-win32-arm64@0.8.4':
+    optional: true
+
+  '@opentui/core-win32-arm64@0.9.4':
+    optional: true
+
   '@opentui/core-win32-x64@0.7.0':
+    optional: true
+
+  '@opentui/core-win32-x64@0.8.4':
+    optional: true
+
+  '@opentui/core-win32-x64@0.9.4':
     optional: true
 
   '@opentui/core@0.7.0(typescript@6.0.3)(web-tree-sitter@0.27.0)':
@@ -4507,6 +4719,82 @@ snapshots:
       '@opentui/core-linux-x64-musl': 0.7.0
       '@opentui/core-win32-arm64': 0.7.0
       '@opentui/core-win32-x64': 0.7.0
+    transitivePeerDependencies:
+      - typescript
+
+  '@opentui/core@0.8.4(typescript@5.9.3)(web-tree-sitter@0.25.10)':
+    dependencies:
+      bun-ffi-structs: 0.3.1(typescript@5.9.3)
+      diff: 9.0.0
+      marked: 17.0.1
+      string-width: 7.2.0
+      web-tree-sitter: 0.25.10
+    optionalDependencies:
+      '@opentui/core-darwin-arm64': 0.8.4
+      '@opentui/core-darwin-x64': 0.8.4
+      '@opentui/core-linux-arm64': 0.8.4
+      '@opentui/core-linux-arm64-musl': 0.8.4
+      '@opentui/core-linux-x64': 0.8.4
+      '@opentui/core-linux-x64-musl': 0.8.4
+      '@opentui/core-win32-arm64': 0.8.4
+      '@opentui/core-win32-x64': 0.8.4
+    transitivePeerDependencies:
+      - typescript
+    optional: true
+
+  '@opentui/core@0.8.4(typescript@7.0.2)(web-tree-sitter@0.25.10)':
+    dependencies:
+      bun-ffi-structs: 0.3.1(typescript@7.0.2)
+      diff: 9.0.0
+      marked: 17.0.1
+      string-width: 7.2.0
+      web-tree-sitter: 0.25.10
+    optionalDependencies:
+      '@opentui/core-darwin-arm64': 0.8.4
+      '@opentui/core-darwin-x64': 0.8.4
+      '@opentui/core-linux-arm64': 0.8.4
+      '@opentui/core-linux-arm64-musl': 0.8.4
+      '@opentui/core-linux-x64': 0.8.4
+      '@opentui/core-linux-x64-musl': 0.8.4
+      '@opentui/core-win32-arm64': 0.8.4
+      '@opentui/core-win32-x64': 0.8.4
+    transitivePeerDependencies:
+      - typescript
+
+  '@opentui/core@0.9.4(typescript@5.9.3)(web-tree-sitter@0.25.10)':
+    dependencies:
+      bun-ffi-structs: 0.3.1(typescript@5.9.3)
+      diff: 9.0.0
+      string-width: 7.2.0
+      web-tree-sitter: 0.25.10
+    optionalDependencies:
+      '@opentui/core-darwin-arm64': 0.9.4
+      '@opentui/core-darwin-x64': 0.9.4
+      '@opentui/core-linux-arm64': 0.9.4
+      '@opentui/core-linux-arm64-musl': 0.9.4
+      '@opentui/core-linux-x64': 0.9.4
+      '@opentui/core-linux-x64-musl': 0.9.4
+      '@opentui/core-win32-arm64': 0.9.4
+      '@opentui/core-win32-x64': 0.9.4
+    transitivePeerDependencies:
+      - typescript
+    optional: true
+
+  '@opentui/core@0.9.4(typescript@7.0.2)(web-tree-sitter@0.25.10)':
+    dependencies:
+      bun-ffi-structs: 0.3.1(typescript@7.0.2)
+      diff: 9.0.0
+      string-width: 7.2.0
+      web-tree-sitter: 0.25.10
+    optionalDependencies:
+      '@opentui/core-darwin-arm64': 0.9.4
+      '@opentui/core-darwin-x64': 0.9.4
+      '@opentui/core-linux-arm64': 0.9.4
+      '@opentui/core-linux-arm64-musl': 0.9.4
+      '@opentui/core-linux-x64': 0.9.4
+      '@opentui/core-linux-x64-musl': 0.9.4
+      '@opentui/core-win32-arm64': 0.9.4
+      '@opentui/core-win32-x64': 0.9.4
     transitivePeerDependencies:
       - typescript
 
@@ -4984,6 +5272,11 @@ snapshots:
   buffer-crc32@0.2.13: {}
 
   buffer-equal-constant-time@1.0.1: {}
+
+  bun-ffi-structs@0.3.1(typescript@5.9.3):
+    dependencies:
+      typescript: 5.9.3
+    optional: true
 
   bun-ffi-structs@0.3.1(typescript@6.0.3):
     dependencies:

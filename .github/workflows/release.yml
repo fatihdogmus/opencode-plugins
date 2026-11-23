@@ -10,6 +10,7 @@ on:
         options:
           - agentic-review
           - codex-guardian
+          - message-timestamps
           - project-tab-groups
           - voice-input
       bump:
