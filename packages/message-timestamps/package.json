@@ -1,6 +1,6 @@
 {
   "name": "@fatihdogmus/opencode-message-timestamps",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Adds each reply's completion time, in your computer's time zone, to the OpenCode TUI's assistant footer",
   "license": "MIT",
   "type": "module",
